@@ -1,14 +1,14 @@
 open Pfds_intf
 
 (* TODO: why not use stacks instead of these lists ? *)
-module Binomial_heap_raw (Elem_: ORDERED) =
+module Binomial_heap_raw (Ord : ORDERED) =
 struct
-	module Elem = Elem_
+	type elmt = Ord.t
 
 	module Tree =
 	struct
 		(* TODO: after testing that this works, perform exercise 3.6 *)
-		type t = int * Elem.t * t list
+		type t = int * elmt * t list
 	
 		let singleton x = 0, x, []
 		let rank (r, _, _) = r
@@ -16,7 +16,7 @@ struct
 		(* Link two trees of same rank *)
 		let link (r1, x1, c1 as t1) (r2, x2, c2 as t2) =
 			assert (r1 = r2) ;
-			if Elem.compare x1 x2 <= 0 then r1+1, x1, t2 :: c1
+			if Ord.compare x1 x2 <= 0 then r1+1, x1, t2 :: c1
 			else r2+1, x2, t1 :: c2
 	end
 
@@ -52,7 +52,7 @@ struct
 		| [t] -> t, []
 		| t :: ts ->
 			let t', ts' = remove_min_tree ts in
-			if Elem.compare (Tree.root t) (Tree.root t') <= 0 then t, ts else t', ts'
+			if Ord.compare (Tree.root t) (Tree.root t') <= 0 then t, ts else t', ts'
 	
 	let min ts =
 		let t = fst (remove_min_tree ts) in
@@ -63,6 +63,6 @@ struct
 		merge (List.rev ts1) ts2
 end
 
-module Binomial_heap (Elem_: ORDERED) :
-	HEAP with module Elem = Elem_ = Binomial_heap_raw (Elem_)
+module Binomial_heap (Ord : ORDERED) :
+	HEAP with type elmt = Ord.t = Binomial_heap_raw (Ord)
 

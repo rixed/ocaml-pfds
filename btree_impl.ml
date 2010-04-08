@@ -7,11 +7,15 @@ struct
 	type t = E | T of (t * elmt * t)
 
 	let empty = E
+	let is_empty = function
+		| E -> true
+		| _ -> false
+	let singleton x = T (E, x, E)
 
 	let insert set x =
 		let rec aux last = function
 			| E ->
-				if last = Some x then raise Exit else T (E, x, E)
+				if last = Some x then raise Exit else singleton x
 			| T (l, y, r) ->
 				let cmp = Ord.compare x y in
 				if cmp < 0 then T (aux None l, y, r)
@@ -33,8 +37,7 @@ struct
 	(* return a set of arbitrary size, filled with x, with max sharing *)
 	let create x n =
 		let rec create2 n =
-			let singleton = T (E, x, E) in
-			if n = 0 then E, singleton
+			if n = 0 then E, singleton x
 			else let s, s' = create2 ((n-1)/2) in
 				if n land 1 = 1 then T (s, x, s), T (s, x, s')
 				else T (s, x, s'), T (s',x, s') in

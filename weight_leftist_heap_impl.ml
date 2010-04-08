@@ -1,10 +1,9 @@
 open Pfds_intf
 
 (* Same as Leftist_heap but with size instead of rank *)
-module Weight_leftist_heap_raw (Elem_: ORDERED) =
+module Weight_leftist_heap_raw (Ord : ORDERED) =
 struct
-	module Elem = Elem_
-	type elmt = Elem.t
+	type elmt = Ord.t
 	type t = E | T of int * elmt * t * t
 
 	let empty = E
@@ -24,7 +23,7 @@ struct
 				(* Contrary to Leftist_heap, we know before merging the resulting size,
 				 * so we know before calling merge if we must merge at left or at right.
 				 * I don't think it makes such a big difference, though. *)
-				if Elem.compare x y <= 0 then (
+				if Ord.compare x y <= 0 then (
 					let size_merge = size a_r + size b in
 					if size a_l >= size_merge then
 						T (size_tot, x, a_l, merge a_r b)
@@ -42,6 +41,6 @@ struct
 	let delete_min = function E -> raise Empty | T (_, _, l, r) -> merge l r
 end
 
-module Weight_leftist_heap (Elem_: ORDERED) :
-	HEAP with module Elem = Elem_ = Weight_leftist_heap_raw (Elem_)
+module Weight_leftist_heap (Ord : ORDERED) :
+	HEAP with type elmt = Ord.t = Weight_leftist_heap_raw (Ord)
 

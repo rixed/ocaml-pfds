@@ -31,12 +31,14 @@ sig
 	type t
 	type elmt
 
-	val empty    : t
-	val insert   : t -> elmt -> t
-	val member   : t -> elmt -> bool
-	val complete : elmt -> int -> t
-	val create   : elmt -> int -> t
-	val iter     : t -> (elmt -> unit) -> unit (* FIXME: include iterable *)
+	val empty     : t
+	val is_empty  : t -> bool
+	val singleton : elmt -> t
+	val insert    : t -> elmt -> t
+	val member    : t -> elmt -> bool
+	val complete  : elmt -> int -> t
+	val create    : elmt -> int -> t
+	val iter      : t -> (elmt -> unit) -> unit (* FIXME: include iterable *)
 	(* TODO : delete... *)
 end
 
@@ -53,23 +55,23 @@ end
 
 module type HEAP =
 sig
-	module Elem : ORDERED
 	type t
+	type elmt
 
 	val empty      : t
 	val is_empty   : t -> bool
-	val singleton  : Elem.t -> t
-	val insert     : t -> Elem.t -> t
+	val singleton  : elmt -> t
+	val insert     : t -> elmt -> t
 	val merge      : t -> t -> t
-	val min        : t -> Elem.t (* raise Empty if t is empty *)
-	val delete_min : t -> t      (* raise Empty if t is empty *)
+	val min        : t -> elmt (* raise Empty if t is empty *)
+	val delete_min : t -> t    (* raise Empty if t is empty *)
 end
 
 module type HEAP_OPS =
 sig
 	module Heap : HEAP
 
-	val of_list : Heap.Elem.t list -> Heap.t
+	val of_list : Heap.elmt list -> Heap.t
 end
 
 (* QUEUE, DEQUEUE, CATLIST... *)
