@@ -1,7 +1,6 @@
 open Pfds_intf
 
-module FinitMap (Ord : ORDERED) :
-	FINITE_MAP with type key = Ord.t =
+module Finite_map_raw (Ord : ORDERED) =
 struct
 	type key = Ord.t
 	type 'a t = E | T of ('a t * key * 'a * 'a t)
@@ -33,3 +32,6 @@ struct
 			f k x ;
 			iter r f
 end
+
+module Finite_map (Ord : ORDERED) :
+	FINITE_MAP with type key = Ord.t = Finite_map_raw (Ord)

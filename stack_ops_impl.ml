@@ -1,7 +1,6 @@
 open Pfds_intf
 
-module Stack_ops (Stack_: STACK)
-	: STACK_OPS with module Stack = Stack_ =
+module Stack_ops_raw (Stack_: STACK) =
 struct
 	module Stack = Stack_
 	open Stack
@@ -20,3 +19,6 @@ struct
 		else if idx = 0 then cons v (tail stack)
 		else cons (head stack) (update (tail stack) (idx-1) v)
 end
+
+module Stack_ops (Stack_: STACK)
+	: STACK_OPS with module Stack = Stack_ = Stack_ops_raw (Stack_)

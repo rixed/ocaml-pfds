@@ -1,8 +1,7 @@
 open Pfds_intf
 
 (* TODO: why not use stacks instead of these lists ? *)
-module Binomial_heap (Elem_: ORDERED) :
-	HEAP with module Elem = Elem_ =
+module Binomial_heap_raw (Elem_: ORDERED) =
 struct
 	module Elem = Elem_
 
@@ -63,3 +62,7 @@ struct
 		let (_, _, ts1), ts2 = remove_min_tree ts in
 		merge (List.rev ts1) ts2
 end
+
+module Binomial_heap (Elem_: ORDERED) :
+	HEAP with module Elem = Elem_ = Binomial_heap_raw (Elem_)
+

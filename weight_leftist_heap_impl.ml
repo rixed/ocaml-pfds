@@ -1,8 +1,7 @@
 open Pfds_intf
 
 (* Same as Leftist_heap but with size instead of rank *)
-module Weight_leftist_heap (Elem_: ORDERED) :
-	HEAP with module Elem = Elem_ =
+module Weight_leftist_heap_raw (Elem_: ORDERED) =
 struct
 	module Elem = Elem_
 	type elmt = Elem.t
@@ -42,3 +41,7 @@ struct
 	let min = function E -> raise Empty | T (_, x, _, _) -> x
 	let delete_min = function E -> raise Empty | T (_, _, l, r) -> merge l r
 end
+
+module Weight_leftist_heap (Elem_: ORDERED) :
+	HEAP with module Elem = Elem_ = Weight_leftist_heap_raw (Elem_)
+

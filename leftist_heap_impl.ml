@@ -1,7 +1,6 @@
 open Pfds_intf
 
-module Leftist_heap (Elem_: ORDERED) :
-	HEAP with module Elem = Elem_ =
+module Leftist_heap_raw (Elem_: ORDERED) =
 struct
 	module Elem = Elem_
 	type elmt = Elem.t
@@ -32,3 +31,7 @@ struct
 	let min = function E -> raise Empty | T (_, x, _, _) -> x
 	let delete_min = function E -> raise Empty | T (_, _, l, r) -> merge l r
 end
+
+module Leftist_heap (Elem_: ORDERED) :
+	HEAP with module Elem = Elem_ = Leftist_heap_raw(Elem_)
+

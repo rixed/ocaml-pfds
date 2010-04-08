@@ -1,7 +1,6 @@
 open Pfds_intf
 
-module Heap_ops (Heap_: HEAP) :
-	HEAP_OPS with module Heap = Heap_ =
+module Heap_ops_raw (Heap_: HEAP) =
 struct
 	module Heap = Heap_
 	open Heap
@@ -17,3 +16,7 @@ struct
 			| l -> merge_all (merge_adjascent [] l) in
 		merge_all (List.map singleton l)
 end
+
+module Heap_ops (Heap_: HEAP) :
+	HEAP_OPS with module Heap = Heap_ = Heap_ops_raw (Heap_)
+

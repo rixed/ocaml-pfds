@@ -1,7 +1,6 @@
 open Pfds_intf
 
-module UnbalancedSet (Ord : ORDERED) :
-	SET with type elmt = Ord.t =
+module Unbalanced_set_raw (Ord : ORDERED) =
 struct
 	(* FIXME: use a finite_map, with 'a = unit *)
 	type elmt = Ord.t
@@ -48,3 +47,7 @@ struct
 			f x ;
 			iter r f
 end
+
+module Unbalanced_set (Ord : ORDERED) :
+	SET with type elmt = Ord.t = Unbalanced_set_raw (Ord)
+

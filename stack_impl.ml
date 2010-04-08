@@ -1,6 +1,6 @@
 open Pfds_intf
 
-module Stack : STACK =
+module Stack_raw =
 struct
 	type 'a t = NIL | CONS of ('a * 'a t)
 
@@ -20,3 +20,5 @@ struct
 		| NIL -> raise Empty
 		| CONS (_, tail) -> tail
 end
+
+module Stack : STACK = Stack_raw
