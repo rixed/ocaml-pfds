@@ -28,6 +28,7 @@ struct
 				if Elem.compare x y <= 0 then makeT x a_l (merge a_r b)
 				else makeT y b_l (merge a b_r))
 	
+	let insert a x = merge a (singleton x)
 	let min = function E -> raise Empty | T (_, x, _, _) -> x
 	let delete_min = function E -> raise Empty | T (_, _, l, r) -> merge l r
 end

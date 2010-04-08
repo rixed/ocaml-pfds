@@ -38,6 +38,7 @@ struct
 					else
 						T (size_tot, y, merge a b_r, b_l)))
 	
+	let insert a x = merge a (singleton x)
 	let min = function E -> raise Empty | T (_, x, _, _) -> x
 	let delete_min = function E -> raise Empty | T (_, _, l, r) -> merge l r
 end

@@ -59,6 +59,7 @@ sig
 	val empty      : t
 	val is_empty   : t -> bool
 	val singleton  : Elem.t -> t
+	val insert     : t -> Elem.t -> t
 	val merge      : t -> t -> t
 	val min        : t -> Elem.t (* raise Empty if t is empty *)
 	val delete_min : t -> t      (* raise Empty if t is empty *)
@@ -68,7 +69,6 @@ module type HEAP_OPS =
 sig
 	module Heap : HEAP
 
-	val insert  : Heap.t -> Heap.Elem.t -> Heap.t
 	val of_list : Heap.Elem.t list -> Heap.t
 end
 

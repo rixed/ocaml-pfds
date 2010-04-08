@@ -6,8 +6,6 @@ struct
 	module Heap = Heap_
 	open Heap
 
-	let insert a x = merge a (singleton x)
-
 	let of_list l =
 		let rec merge_adjascent prevs = function
 			| [] -> prevs
