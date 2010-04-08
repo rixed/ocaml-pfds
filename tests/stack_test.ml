@@ -27,7 +27,8 @@ struct
 		let suff_s =
 			cons s
 				(cons (cons 2 (cons 3 empty))
-					(cons (cons 3 empty) empty)) in
+					(cons (cons 3 empty)
+						(cons empty empty))) in
 		assert (suffixes s = suff_s)
 end
 
