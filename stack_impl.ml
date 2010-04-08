@@ -3,7 +3,6 @@ open Pfds_intf
 module Stack : STACK =
 struct
 	type 'a t = NIL | CONS of ('a * 'a t)
-	exception Empty
 
 	let empty = NIL
 	
