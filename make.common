@@ -1,3 +1,30 @@
+OCAMLC   = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlc
+OCAMLOPT = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlopt
+OCAMLDEP = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamldep
+override OCAMLOPTFLAGS += $(INCS) -w Ael -g -rectypes
+override OCAMLFLAGS    += $(INCS) -w Ael -g -rectypes
+
+all:
+
+.PHONY: all opt clean clean-spec install uninstall reinstall
+
+ifdef PKG_NAME
+OBJECTS  = $(SOURCES:.ml=.cmo)
+XOBJECTS = $(OBJECTS:.cmo=.cmx)
+ARCHIVE  = $(PKG_NAME).cma
+XARCHIVE = $(ARCHIVE:.cma=.cmxa)
+$(ARCHIVE): $(OBJECTS) $(CLIB)
+	$(OCAMLC)   -a -o $@ -package "$(REQUIRES)" -linkpkg $(OCAMLFLAGS) $(OBJECTS)
+$(XARCHIVE): $(XOBJECTS) $(CLIB)
+	$(OCAMLOPT) -a -o $@ -package "$(REQUIRES)" $(OCAMLOPTFLAGS) $(XOBJECTS)
+install: $(ARCHIVE)
+	if test -f "$(XARCHIVE)" ; then extra="$(XARCHIVE) "`basename "$(XARCHIVE)" .cmxa`.a ; fi ; \
+	ocamlfind install "$(PKG_NAME)" *.cmi "$(ARCHIVE)" META $$extra
+uninstall:
+	ocamlfind remove $(PKG_NAME)
+reinstall: uninstall install
+endif
+
 # Common rules
 .SUFFIXES: .ml .mli .cmo .cmi .cmx .opt .byte
 
@@ -16,4 +43,12 @@
 .ml.cmx:
 	$(OCAMLOPT) -package "$(REQUIRES)" $(OCAMLOPTFLAGS) -c $<
 
+# Clean up
+clean: clean-spec
+	rm -f *.cm[ioxa] *.cmxa *.a *.s *.o *.byte *.opt .depend
 
+# Dependencies
+.depend: *.ml
+	$(OCAMLDEP) -package "$(REQUIRES)" -I .. $^ > $@
+
+include .depend

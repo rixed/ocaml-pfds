@@ -31,3 +31,6 @@ struct
 		assert (suffixes s = suff_s)
 end
 
+module Stack_test1 = Stack_test(Stack_impl.Stack)
+module Stack_test2 = Stack_ops_test(Stack_ops_impl.Stack_ops(Stack_impl.Stack))
+
