@@ -15,6 +15,13 @@ struct
 			| [ h ] -> h
 			| l -> merge_all (merge_adjascent [] l) in
 		merge_all (List.map singleton l)
+
+	let length h =
+		let rec aux h c =
+			if is_empty h then c
+			else aux (delete_min h) (c+1) in
+		aux h 0
+
 end
 
 module Heap_ops (Heap_: HEAP) :

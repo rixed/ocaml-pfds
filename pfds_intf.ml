@@ -72,6 +72,7 @@ sig
 	module Heap : HEAP
 
 	val of_list : Heap.elmt list -> Heap.t
+	val length  : Heap.t -> int
 end
 
 (* QUEUE, DEQUEUE, CATLIST... *)
