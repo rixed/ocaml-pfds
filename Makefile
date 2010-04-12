@@ -15,7 +15,11 @@ all: $(ARCHIVE)
 opt: $(XARCHIVE)
 
 check: $(ARCHIVE) $(XARCHIVE)
-	todo
+	@cd tests && $(MAKE) $(MAKEFLAGS) all opt
+	@for t in stack heap ; do \
+		tests/"$$t"_test.byte ; \
+		tests/"$$t"_test.opt ; \
+	done
 
 clean-spec:
 
