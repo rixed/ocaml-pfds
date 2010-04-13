@@ -7,60 +7,58 @@ struct
 
 	module Tree =
 	struct
-		(* TODO: after testing that this works, perform exercise 3.6 *)
-		type t = int * elmt * t list
+		type t = elmt * t list
 	
-		let singleton x = 0, x, []
-		let rank (r, _, _) = r
-		let root (_, x, _) = x
+		let singleton x = x, []
+		let root (x, _) = x
 		(* Link two trees of same rank *)
-		let link (r1, x1, c1 as t1) (r2, x2, c2 as t2) =
-			assert (r1 = r2) ;
-			if Ord.compare x1 x2 <= 0 then r1+1, x1, t2 :: c1
-			else r2+1, x2, t1 :: c2
+		let link (x1, c1 as t1) (x2, c2 as t2) =
+			if Ord.compare x1 x2 <= 0 then x1, t2 :: c1
+			else x2, t1 :: c2
 	end
 
-	type t = Tree.t list
+	type t = (int * Tree.t) list
 
 	let empty = []
 	let is_empty = function [] -> true | _ -> false (* Stack.is_empty... *)
-	let singleton x = [Tree.singleton x]
+	let singleton x = [0, Tree.singleton x]
 
 	(* Insert in the heap a new tree of rank <= min rank of the heap *)
-	let rec ins_tree t = function
-		| [] -> [t]
-		| t' :: ts' as ts ->
-			if Tree.rank t < Tree.rank t' then t :: ts
-			else ins_tree (Tree.link t t') ts'
+	let rec ins_tree r t = function
+		| [] -> [r, t]
+		| (r', t') :: ts' as ts ->
+			if r < r' then (r, t) :: ts
+			else ins_tree (r+1) (Tree.link t t') ts'
 	
-	let insert ts x = ins_tree (Tree.singleton x) ts
+	let insert ts x = ins_tree 0 (Tree.singleton x) ts
 
 	let rec merge ts1 ts2 = match ts1 with
 		| [] -> ts2
-		| t1 :: ts1' -> (match ts2 with
+		| (r1, t1) :: ts1' -> (match ts2 with
 			| [] -> ts1
-			| t2 :: ts2' ->
-				let rank1 = Tree.rank t1
-				and rank2 = Tree.rank t2 in
-				if rank1 < rank2 then t1 :: merge ts1' ts2
-				else if rank1 > rank2 then t2 :: merge ts1 ts2'
-				else ins_tree (Tree.link t1 t2) (merge ts1' ts2'))
+			| (r2, t2) :: ts2' ->
+				if r1 < r2 then (r1, t1) :: merge ts1' ts2
+				else if r1 > r2 then (r2, t2) :: merge ts1 ts2'
+				else ins_tree (r1+1) (Tree.link t1 t2) (merge ts1' ts2'))
 	
-	(* remove the tree with minimal root and return both this tree and remaining heap *)
+	(* remove the tree with minimal root and return both this tree (with rank) and remaining heap *)
 	let rec remove_min_tree = function
 		| [] -> raise Empty
-		| [t] -> t, []
-		| t :: ts ->
-			let t', ts' = remove_min_tree ts in
-			if Ord.compare (Tree.root t) (Tree.root t') <= 0 then t, ts else t', ts'
+		| [x] -> x, []
+		| (r, t) :: ts ->
+			let (r', t'), ts' = remove_min_tree ts in
+			if Ord.compare (Tree.root t) (Tree.root t') <= 0 then (r, t), ts else (r', t'), ts'
 	
 	let min ts =
-		let t = fst (remove_min_tree ts) in
+		let (_, t), _ = remove_min_tree ts in
 		Tree.root t
 	
 	let delete_min ts =
-		let (_, _, ts1), ts2 = remove_min_tree ts in
-		merge (List.rev ts1) ts2
+		let (r, (_, ts1)), ts2 = remove_min_tree ts in
+		let rec makeH prev = function
+			| [] -> prev
+			| t :: ts -> makeH ((r-1, t) :: prev) ts in
+		merge (makeH [] ts1) ts2
 end
 
 module Binomial_heap (Ord : ORDERED) :
