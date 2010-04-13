@@ -17,20 +17,32 @@ module Ins4 : INSERABLE = Binomial_heap_impl.Binomial_heap_raw (String)
 module Inserable_bench (Ins : INSERABLE) =
 struct
 	open Ins
+	let rec string_rev s =
+		let n = String.length s in
+		for i = 0 to (n - 1) / 2 do
+			let c = s.[i] in
+			s.[i] <- s.[n-i-1] ;
+			s.[n-i-1] <- c ;
+		done ;
+		s
+
 	let insert_file fname =
 		let cin = open_in fname in
 		let rec insert_next_line i =
-			insert_next_line (insert i (input_line cin)) in
+			(*Revert the word in order to unsort the list *)
+			let word = string_rev (input_line cin) in
+			insert_next_line (insert i word) in
 		try insert_next_line empty
 		with End_of_file -> close_in cin
 	
 	let rec insert_int h min max =
-		if min < max then insert_int (insert h (string_of_int min)) (min+1) max
+		if min < max then
+			let s = string_of_int (Random.int 9999999) in
+			insert_int (insert h s) (min+1) max
 		else h
+	
+	let insert_n = insert_int empty 0
 
-	let test () =
-		insert_file "/usr/share/dict/words" ;
-		Gc.compact ()
 end
 
 module Bench1 = Inserable_bench (Ins1)
@@ -38,12 +50,35 @@ module Bench2 = Inserable_bench (Ins2)
 module Bench3 = Inserable_bench (Ins3)
 module Bench4 = Inserable_bench (Ins4)
 
-let () =
+let bench_words fname =
 	let bench_res = Benchmark.latencyN ~repeat:3 4L
-		[ "Binomial heap",  Bench4.test, () ;
-		  "Weight heap",    Bench3.test, () ;
-		  "Leftist heap",   Bench2.test, () ;
-		  "Unbalanced set", Bench1.test, () ] in
+		[ "Unbalanced set", Bench1.insert_file, fname ;
+		(*"Leftist heap",   Bench2.insert_file, fname ;*)
+		  "Weight heap",    Bench3.insert_file, fname ;
+		  "Binomial heap",  Bench4.insert_file, fname ] in
 	print_newline () ;
 	Benchmark.tabulate bench_res
 
+let bench_time max =
+	let step = max / 20 in
+	let rec time n f =
+		if n >= max then Printf.printf "\n\n%!"
+		else (
+			let t0 = Benchmark.make 0L in
+			ignore (f n) ;
+			let b = Benchmark.sub (Benchmark.make 0L) t0 in
+			Printf.printf "%d %f\n" n b.Benchmark.utime ;
+			time (n + step) f
+		) in
+	time 0 Bench1.insert_n ;
+(*	time 0 Bench2.insert_n ; *)
+	time 0 Bench3.insert_n ;
+	time 0 Bench4.insert_n
+	
+let () =
+	Random.self_init () ;
+	Arg.parse [
+		"-words", Arg.String bench_words, "Compare insertions of the given file's lines" ;
+		"-time", Arg.Int bench_time, "Times insertions of up to that many random strings" ]
+		(fun str -> Printf.printf "What about %s ?\n" str)
+		"Benchmark various insertables data structures.\n"
