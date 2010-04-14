@@ -36,8 +36,6 @@ sig
 	val singleton : elmt -> t
 	val insert    : t -> elmt -> t
 	val member    : t -> elmt -> bool
-	val complete  : elmt -> int -> t
-	val create    : elmt -> int -> t
 	val iter      : t -> (elmt -> unit) -> unit (* FIXME: include iterable *)
 	(* TODO : delete... *)
 end

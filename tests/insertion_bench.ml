@@ -49,13 +49,15 @@ module Bench1 = Inserable_bench (Ins1)
 module Bench2 = Inserable_bench (Ins2)
 module Bench3 = Inserable_bench (Ins3)
 module Bench4 = Inserable_bench (Ins4)
+module Bench5 = Inserable_bench (Ins5)
 
 let bench_words fname =
 	let bench_res = Benchmark.latencyN ~repeat:3 4L
 		[ "Unbalanced set", Bench1.insert_file, fname ;
 		  "Leftist heap",   Bench2.insert_file, fname ;
 		  "Weight heap",    Bench3.insert_file, fname ;
-		  "Binomial heap",  Bench4.insert_file, fname ] in
+		  "Binomial heap",  Bench4.insert_file, fname ;
+		  "Red-Black tree", Bench5.insert_file, fname ] in
 	print_newline () ;
 	Benchmark.tabulate bench_res
 
@@ -78,7 +80,8 @@ let bench_time max =
 	time "Unbalanced set" Bench1.insert_n ;
 	time "Leftist heap"   Bench2.insert_n ;
 	time "Weight heap"    Bench3.insert_n ;
-	time "Binomial heap"  Bench4.insert_n
+	time "Binomial heap"  Bench4.insert_n ;
+	time "Red-Black tree" Bench5.insert_n
 	
 let () =
 	Random.self_init () ;
