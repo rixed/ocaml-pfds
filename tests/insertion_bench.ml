@@ -53,27 +53,32 @@ module Bench4 = Inserable_bench (Ins4)
 let bench_words fname =
 	let bench_res = Benchmark.latencyN ~repeat:3 4L
 		[ "Unbalanced set", Bench1.insert_file, fname ;
-		(*"Leftist heap",   Bench2.insert_file, fname ;*)
+		  "Leftist heap",   Bench2.insert_file, fname ;
 		  "Weight heap",    Bench3.insert_file, fname ;
 		  "Binomial heap",  Bench4.insert_file, fname ] in
 	print_newline () ;
 	Benchmark.tabulate bench_res
 
+(* You ca plot this output with gnuplot using :
+ * plot 'insert.log' using 1:2:(column(-2)) linecolor variable *)
 let bench_time max =
 	let step = max / 20 in
-	let rec time n f =
-		if n >= max then Printf.printf "\n\n%!"
-		else (
-			let t0 = Benchmark.make 0L in
-			ignore (f n) ;
-			let b = Benchmark.sub (Benchmark.make 0L) t0 in
-			Printf.printf "%d %f\n" n b.Benchmark.utime ;
-			time (n + step) f
-		) in
-	time 0 Bench1.insert_n ;
-(*	time 0 Bench2.insert_n ; *)
-	time 0 Bench3.insert_n ;
-	time 0 Bench4.insert_n
+	let time title f =
+		let rec aux n =
+			if n >= max then Printf.printf "\n\n%!"
+			else (
+				let t0 = Benchmark.make 0L in
+				ignore (f n) ;
+				let b = Benchmark.sub (Benchmark.make 0L) t0 in
+				Printf.printf "%d %f\n" n b.Benchmark.utime ;
+				aux (n + step)
+			) in
+		Printf.printf "# %s\n" title ;
+		aux 0 in
+	time "Unbalanced set" Bench1.insert_n ;
+	time "Leftist heap"   Bench2.insert_n ;
+	time "Weight heap"    Bench3.insert_n ;
+	time "Binomial heap"  Bench4.insert_n
 	
 let () =
 	Random.self_init () ;

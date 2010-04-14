@@ -21,7 +21,7 @@ struct
 			| T (_, y, b_l, b_r) ->
 				let makeT v l r =
 					let rank_l, rank_r = rank l, rank r in
-					if rank_l < rank_r then T (rank_l + 1, v, l, r)
+					if rank_l >= rank_r then T (rank_l + 1, v, l, r)
 					else T (rank_r + 1, v, r, l) in
 				if Ord.compare x y <= 0 then makeT x a_l (merge a_r b)
 				else makeT y b_l (merge a b_r))
