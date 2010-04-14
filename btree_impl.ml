@@ -18,17 +18,18 @@ struct
 				if last = Some x then raise Exit else singleton x
 			| T (l, y, r) ->
 				let cmp = Ord.compare x y in
-				if cmp < 0 then T (aux None l, y, r)
-				else T (l, y, aux last r) in
+				if cmp < 0 then T (aux last l, y, r)
+				else T (l, y, aux (Some y) r) in
 		try aux None set with Exit -> set
 	
-	let rec member set x = match set with
-		| E -> false
-		| T (l, y, r) ->
-			let cmp = Ord.compare x y in
-			if cmp < 0 then member l x
-			else if cmp > 0 then member r x
-			else true
+	let member set x =
+		let rec aux last = function
+			| E -> last = Some x
+			| T (l, y, r) ->
+				let cmp = Ord.compare x y in
+				if cmp < 0 then aux last l
+				else aux (Some y) r in
+		aux None set
 	
 	let rec complete x depth =
 		if depth = 0 then E
