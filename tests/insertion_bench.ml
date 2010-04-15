@@ -13,6 +13,7 @@ module Ins1 : INSERABLE = Btree_impl.Unbalanced_set_raw (String)
 module Ins2 : INSERABLE = Leftist_heap_impl.Leftist_heap_raw (String)
 module Ins3 : INSERABLE = Weight_leftist_heap_impl.Weight_leftist_heap_raw (String)
 module Ins4 : INSERABLE = Binomial_heap_impl.Binomial_heap_raw (String)
+module Ins5 : INSERABLE = Red_black_tree_impl.Red_black_tree_raw (String)
 
 module Inserable_bench (Ins : INSERABLE) =
 struct

@@ -18,6 +18,22 @@ struct
 			else if cmp > 0 then member r x
 			else true
 	
+	let check_invariants t =
+		let rec chk prec_col tot_B = function
+			| E -> tot_B
+			| T (R, l, _, r) ->
+				if prec_col = R then failwith "2 successive Reds" ;
+				let depth_l = chk R tot_B l
+				and depth_r = chk R tot_B r in
+				if depth_l <> depth_r then failwith "Not same Black count (R)" ;
+				depth_l
+			| T (B, l, _, r) ->
+				let depth_l = chk B (tot_B+1) l
+				and depth_r = chk B (tot_B+1) r in
+				if depth_l <> depth_r then failwith "Not same Black count (B)" ;
+				depth_l in
+		ignore (chk B 0 t)
+
 	let balance_l = function
 		| B, T (R, a, x, T (R, b, y, c)), z, d
 		| B, T (R, T (R, a, x, b), y, c), z, d ->
@@ -32,7 +48,7 @@ struct
 	
 	let insert t x =
 		let rec ins = function
-			| E -> singleton x
+			| E -> T (R, E, x, E)
 			| T (color, l, y, r) ->
 				let cmp = Ord.compare x y in
 				if cmp < 0 then balance_l (color, ins l, y, r)
@@ -42,6 +58,11 @@ struct
 			| T (_, l, y, r) -> T (B, l, y, r)
 			| _ -> failwith "Someone messed up the compiler"
 		with Exit -> t
+	
+	let insert' t x =
+		let t' = insert t x in
+		check_invariants t' ;
+		t'
 	
 	let rec iter t f = match t with
 		| E -> ()
