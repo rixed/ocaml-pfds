@@ -17,7 +17,7 @@ opt: $(XARCHIVE)
 
 check: $(ARCHIVE) $(XARCHIVE)
 	@cd tests && $(MAKE) $(MAKEFLAGS) all opt
-	@for t in stack heap ; do \
+	@for t in stack heap set stream ; do \
 		tests/"$$t"_test.byte ; \
 		tests/"$$t"_test.opt ; \
 	done

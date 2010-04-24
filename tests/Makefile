@@ -1,6 +1,11 @@
 top_srcdir = ..
 REQUIRES = pfds benchmark
-PROGRAMS = stack_test.byte heap_test.byte set_test.byte insertion_bench.byte
+PROGRAMS = \
+	stack_test.byte \
+	heap_test.byte \
+	set_test.byte \
+	stream_test.byte \
+	insertion_bench.byte
 
 include ../make.common
 

@@ -6,8 +6,15 @@ struct
 	type 'a t = 'a cell Lazy.t
 	and 'a cell = Nil | Cons of 'a * 'a t
 
+	(* Variables named "x" are items of a lazy list,
+	 * variables named "f" are functions,
+	 * variables named "n" are integer counters while "l" are integer lengths,
+	 * variables named "t" are lazy lists,
+	 * variables named "tt" are lazy lists of lazy lists.
+	 * There are no such monstruosities as lazy lists of lazy lists of lazy lists. *)
+	
 	let empty = lazy Nil
-	let is_empty x = x = lazy Nil
+	let is_empty t = t = lazy Nil
 
 	(* Convertion / Creation *)
 
@@ -22,7 +29,7 @@ struct
 	let to_list t = List.rev (to_list_rev t)
 
 	let rec of_list = function
-		| [] -> lazy Nil
+		| [] -> empty
 		| h :: t -> lazy (Cons (h, of_list t))
 
 	let rec of_succ succ first = lazy (Cons (first, of_succ succ (succ first)))
@@ -34,7 +41,7 @@ struct
 		| lazy (Cons (x, _)) -> x
 	
 	let tail = function
-		| lazy Nil -> lazy Nil
+		| lazy Nil as nil -> nil
 		| lazy (Cons (_, t)) -> t
 	
 	let rec nth t n =
@@ -66,7 +73,7 @@ struct
 		| lazy (Cons (x, t')) -> fold t' (f x b) f
 
 	let rec filter t f = match t with
-		| lazy Nil -> lazy Nil
+		| lazy Nil as nil -> nil
 		| lazy (Cons (x, t')) -> if f x then lazy (Cons (x, filter t' f)) else filter t' f
 	
 	(* Generators *)
@@ -83,22 +90,22 @@ struct
 		| Some n -> if n <= 0 then empty else lazy (Cons (x, repeat ~count:(n-1) x))
 	
 	let rec stammer n = function
-		| lazy Nil -> empty
-		| lazy (Cons (x, t')) -> cat (repeat ~count:n x) (stammer n t')
+		| lazy Nil as nil -> nil
+		| lazy (Cons (x, t')) -> lazy (Cons (x, cat (repeat ~count:(n-1) x) (stammer n t')))
 
 	let rec dropwhile f t = match t with
-		| lazy Nil -> lazy Nil
-		| lazy (Cons (x, t')) -> if f x then t else dropwhile f t'
+		| lazy Nil as nil -> nil
+		| lazy (Cons (x, t')) -> if f x then dropwhile f t' else t
 	
 	let rec takewhile f t = match t with
-		| lazy Nil -> lazy Nil
-		| lazy (Cons (x, t')) -> if f x then lazy (Cons (x, takewhile f t')) else lazy Nil
+		| lazy Nil as nil -> nil
+		| lazy (Cons (x, t')) -> if f x then lazy (Cons (x, takewhile f t')) else empty
 
 	let rec skip n t = if n = 0 then t else skip (n-1) (tail t)
 
 	let one_every n t =
 		let rec aux n' = function
-			| lazy Nil -> lazy Nil
+			| lazy Nil as nil -> nil
 			| lazy (Cons (x, t')) ->
 				if n' = 1 then lazy (Cons (x, aux n t')) else aux (n'-1) t' in
 		aux 1 t
@@ -118,15 +125,15 @@ struct
 			| lazy Nil -> lazy Nil
 			| lazy (Cons (h2, t2')) -> lazy (Cons ((h1, h2), zip2 t1' t2')))
 
-	let rec zip2_longest t1 t2 fill1 fill2 =
-		if is_empty t1 && is_empty t2 then lazy Nil else
-			let h1 = if is_empty t1 then fill1 else head t1
-			and h2 = if is_empty t2 then fill2 else head t2 in
-			lazy (Cons ((h1, h2), zip2_longest (tail t1) (tail t2) fill1 fill2))
+	let rec zip2_longest t1 t2 x1 x2 =
+		if is_empty t1 && is_empty t2 then empty else
+			let h1 = if is_empty t1 then x1 else head t1
+			and h2 = if is_empty t2 then x2 else head t2 in
+			lazy (Cons ((h1, h2), zip2_longest (tail t1) (tail t2) x1 x2))
 
-	let firsts n t =
-		let count = ref 0 in
-		takewhile (fun _ -> incr count ; !count <= n) t
+	let rec firsts n = function
+		| lazy Nil as nil -> nil
+		| lazy (Cons (x, t')) -> if n <= 0 then empty else lazy (Cons (x, firsts (n-1) t'))
 	
 	let lasts n t =
 		let rec aux h' = function
@@ -134,11 +141,11 @@ struct
 			| lazy (Cons (_, t')) -> aux (tail h') t' in
 		aux t (skip n t)
 
-	let groupby t key =
-		(* prep_key {1,2,3} = (key 1),{1,2,3} *)
+	let groupby t f_key =
+		(* prep_key {1,2,3} = (f_key 1),{1,2,3} *)
 		let prep_key t =
 			assert (not (is_empty t)) ;
-			(key (head t)), t in
+			(f_key (head t)), t in
 		(* headtail k3,{3,2,1} k4,{4,5,6} = {(k4,{4,3,2,1}), (k5,{5,6})} *)
 		let rec headtail p1 p2 =
 			match p2 with
@@ -155,14 +162,14 @@ struct
 			| k, t -> headtail (k,empty) (prep_key t) in
 		if is_empty t then empty else groupby' (prep_key t)
 
-	let uniq t key =
+	let uniq t f_key =
 		let rec aux prev_k = function
-			| lazy Nil -> empty
-			| lazy (Cons (x, t')) -> let k_x = key x in
+			| lazy Nil as nil -> nil
+			| lazy (Cons (x, t')) -> let k_x = f_key x in
 				if k_x = prev_k then aux prev_k t'
 				else lazy (Cons (x, aux k_x t')) in
 		if is_empty t then empty else
-			let h = head t in lazy (Cons (h, aux (key h) t))
+			let h = head t in lazy (Cons (h, aux (f_key h) t))
 	
 	(* Combinatoric generators *)
 
