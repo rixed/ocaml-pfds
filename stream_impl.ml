@@ -207,15 +207,16 @@ struct
 			else lazy (Cons (t, rep (n-1))) in
 		product (rep n)
 
+	let prepend_all x tt =
+		if is_empty tt then singleton (singleton x) else
+		map tt (fun t -> cat (singleton x) t)
+
 	let rec permutations ?len t =
 		if is_empty t then empty else
 		let li = length t in
 		let lo = match len with
 			| None -> li
 			| Some n -> assert (n<=li) ; n in
-		let prepend_all x tt =
-			if is_empty tt then singleton (singleton x) else
-			map tt (fun t -> cat (singleton x) t) in
 		let rec perms' n li lo t =
 			if n = li then empty else
 			cat (prepend_all (head t) (perms (li-1) (lo-1) (firsts (li-1) (tail t))))
@@ -226,6 +227,17 @@ struct
 			perms' 0 li lo t' in
 		perms li lo t
 
+	(* combinations {1,2,3} 2 = {{1,2},{1,3},{2,3}} *)
+	let combinations t len =
+		let li = length t in
+		assert (len <= li) ;
+		let rec combs t len ll =
+			if len = 0 then singleton empty
+			else if ll = 0 then empty
+			else cat (prepend_all (head t) (combs (tail t) (len-1) ll))
+			    	 (combs (tail t) len (ll-1)) in
+		if is_empty t or len = 0 then empty 
+		else combs t len (li - len + 1)
 end
 
 module Stream : STREAM = Stream_raw

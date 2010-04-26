@@ -85,6 +85,30 @@ let zip_check () =
 	let z = zip (singleton (firsts 1 nat)) in
 	assert (to_list (map z to_list) = [ [0] ])
 
+let check_fail f p =
+	try (f p ; assert false)
+	with Assert_failure _ -> ()
+
+let comb_check () =
+	let check t len expected =
+		let combs = combinations t len in
+		assert (to_list (map combs to_list) = expected) in
+	let t = (firsts 5 nat) in
+	check t 5 [ [0;1;2;3;4] ] ;
+	check t 4 [ [0;1;2;3] ; [0;1;2;4] ; [0;1;3;4] ; [0;2;3;4] ; [1;2;3;4] ] ;
+	check t 3 [ [0;1;2] ; [0;1;3] ; [0;1;4] ; [0;2;3] ; [0;2;4] ; [0;3;4] ;
+	            [1;2;3] ; [1;2;4] ; [1;3;4] ;
+				[2;3;4] ] ;
+	check t 2 [ [0;1] ; [0;2] ; [0;3] ; [0;4] ;
+	            [1;2] ; [1;3] ; [1;4] ;
+				[2;3] ; [2;4] ;
+				[3;4] ] ;
+	check t 1 [ [0] ; [1] ; [2] ; [3] ; [4] ] ;
+	check t 0 [] ;
+	check empty 0 [] ;
+	check_fail (combinations empty) 1 ;
+	check_fail (combinations t) 6
+
 (* Now for more realistic examples *)
 
 let fibo_check () =
@@ -130,6 +154,7 @@ let () =
 	gen_check () ;
 	group_check () ;
 	zip_check () ;
+	comb_check () ;
 	fibo_check () ;
 	root_check ()
 
