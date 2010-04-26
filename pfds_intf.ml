@@ -61,8 +61,8 @@ sig
 	val singleton  : elmt -> t
 	val insert     : t -> elmt -> t
 	val merge      : t -> t -> t
-	val min        : t -> elmt (* raise Empty if t is empty *)
-	val delete_min : t -> t    (* raise Empty if t is empty *)
+	val min        : t -> elmt (* raises Empty if t is empty *)
+	val delete_min : t -> t    (* raises Empty if t is empty *)
 end
 
 module type HEAP_OPS =
@@ -73,4 +73,16 @@ sig
 	val length  : Heap.t -> int
 end
 
-(* QUEUE, DEQUEUE, CATLIST... *)
+module type QUEUE =
+sig
+	type 'a t
+
+	val empty     : 'a t
+	val is_empty  : 'a t -> bool
+	val singleton : 'a -> 'a t
+	val snoc      : 'a t -> 'a -> 'a t
+	val head      : 'a t -> 'a    (* raises Empty if t is empty *)
+	val tail      : 'a t -> 'a t  (* raises Empty if t is empty *)
+end
+
+(* DEQUEUE, CATLIST... *)

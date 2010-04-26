@@ -5,6 +5,7 @@ PROGRAMS = \
 	heap_test.byte \
 	set_test.byte \
 	stream_test.byte \
+	queue_test.byte \
 	insertion_bench.byte
 
 include ../make.common
