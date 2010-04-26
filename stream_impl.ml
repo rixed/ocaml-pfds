@@ -228,7 +228,7 @@ struct
 		perms li lo t
 
 	(* combinations {1,2,3} 2 = {{1,2},{1,3},{2,3}} *)
-	let combinations t len =
+	let combinations len t =
 		let li = length t in
 		assert (len <= li) ;
 		let rec combs t len ll =

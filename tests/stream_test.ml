@@ -87,11 +87,36 @@ let zip_check () =
 
 let check_fail f p =
 	try (f p ; assert false)
-	with Assert_failure _ -> ()
+	with _ -> ()
+
+let prod_check () =
+	let check tt expected =
+		let prods = product tt in
+		assert (to_list (map prods to_list) = expected) in
+	let t1 = (firsts 3 nat)
+	and t2 = (firsts 2 (skip 3 nat)) in
+	check (of_list [t1;t2]) [ [0;3] ; [1;3] ; [2;3] ; [0;4] ; [1;4] ; [2;4] ] ;
+	check (of_list [t1]) [ [0] ; [1] ; [2] ] ;
+	check empty [] ;
+	check (of_list [t2;t2;t2]) [ [3;3;3] ; [4;3;3] ; [3;4;3] ; [4;4;3] ;
+	                             [3;3;4] ; [4;3;4] ; [3;4;4] ; [4;4;4] ] ;
+	check_fail product (singleton empty)
+
+let perm_check () =
+	let check t ?len expected =
+		let perms = permutations ?len t in
+		assert (to_list (map perms to_list) = expected) in
+	let t = (firsts 3 nat) in
+	check t [ [0;1;2] ; [0;2;1] ; [1;2;0] ; [1;0;2] ; [2;0;1] ; [2;1;0] ] ;
+	check t ~len:2 [ [0;1] ; [0;2] ; [1;2] ; [1;0] ; [2;0] ; [2;1] ] ;
+	check empty [] ;
+	check_fail permutations (singleton empty) ;
+	check_fail (permutations ~len:4) t ;
+	check_fail permutations t
 
 let comb_check () =
 	let check t len expected =
-		let combs = combinations t len in
+		let combs = combinations len t in
 		assert (to_list (map combs to_list) = expected) in
 	let t = (firsts 5 nat) in
 	check t 5 [ [0;1;2;3;4] ] ;
@@ -106,8 +131,8 @@ let comb_check () =
 	check t 1 [ [0] ; [1] ; [2] ; [3] ; [4] ] ;
 	check t 0 [] ;
 	check empty 0 [] ;
-	check_fail (combinations empty) 1 ;
-	check_fail (combinations t) 6
+	check_fail (combinations 1) empty ;
+	check_fail (combinations 6) t
 
 (* Now for more realistic examples *)
 
@@ -154,6 +179,8 @@ let () =
 	gen_check () ;
 	group_check () ;
 	zip_check () ;
+	prod_check () ;
+	perm_check () ;
 	comb_check () ;
 	fibo_check () ;
 	root_check ()

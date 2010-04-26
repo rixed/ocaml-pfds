@@ -44,6 +44,6 @@ sig
 	val zip          : 'a t t -> 'a t t (* {{a,b,..},{c,d,..},{e,f,..}} -> {{a,c,e},{b,d,f},...} *)
 	val product      : 'a t t -> 'a t t (* {{1,2,3},{3,4}} -> {{1,3},{1,4},{2,3},{2,4},{3,3},..} *)
 	val permutations : ?len:int -> 'a t -> 'a t t (* {1,2,3} -> {{1,2,3},{1,3,2},{2,1,3},..} *)
-	val combinations : 'a t -> int -> 'a t t (* {1,2,3},2 -> {{1,2},{1,3},{2,3}} *)
+	val combinations : int -> 'a t -> 'a t t (* {1,2,3},2 -> {{1,2},{1,3},{2,3}} *)
 end
 
