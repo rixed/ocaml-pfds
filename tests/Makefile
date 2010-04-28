@@ -6,6 +6,7 @@ PROGRAMS = \
 	set_test.byte \
 	stream_test.byte \
 	queue_test.byte \
+	dequeue_test.byte \
 	insertion_bench.byte
 
 include ../make.common

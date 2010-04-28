@@ -19,4 +19,5 @@ struct
 end
 
 module Batched_queue_test = Queue_test (Batched_queue_impl.Batched_queue_raw)
+module Dequeue_test = Queue_test (Dequeue_impl.Dequeue_raw)
 

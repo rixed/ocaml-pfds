@@ -85,4 +85,21 @@ sig
 	val tail      : 'a t -> 'a t  (* raises Empty if t is empty *)
 end
 
-(* DEQUEUE, CATLIST... *)
+module type DEQUEUE =
+sig
+	type 'a t
+
+	val empty     : 'a t
+	val is_empty  : 'a t -> bool
+	val singleton : 'a -> 'a t
+
+	val cons      : 'a t -> 'a -> 'a t
+	val head      : 'a t -> 'a   (* raises Empty if t is empty *)
+	val tail      : 'a t -> 'a t (* raises Empty if t is empty *)
+
+	val snoc      : 'a t -> 'a -> 'a t
+	val last      : 'a t -> 'a    (* raises Empty if t is empty *)
+	val init      : 'a t -> 'a t  (* raises Empty if t is empty *)
+end	
+
+(* CATLIST... *)
