@@ -85,6 +85,12 @@ let zip_check () =
 	let z = zip (singleton (firsts 1 nat)) in
 	assert (to_list (map z to_list) = [ [0] ])
 
+let altern_check () =
+	let t1 = firsts 3 nat in
+	let t2 = of_list [ 6 ; 7 ] in
+	let a = altern2 t1 t2 in
+	assert (S.to_list a = [ 0 ; 6 ; 1 ; 7 ; 2 ])
+
 let check_fail f p =
 	try (f p ; assert false)
 	with _ -> ()
@@ -179,6 +185,7 @@ let () =
 	gen_check () ;
 	group_check () ;
 	zip_check () ;
+	altern_check () ;
 	prod_check () ;
 	perm_check () ;
 	comb_check () ;

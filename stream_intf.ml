@@ -37,6 +37,7 @@ sig
 	val slice        : ?step:int -> ?dropwhile:('a -> bool) -> ?takewhile:('a -> bool) -> 'a t -> 'a t
 	val zip2         : 'a t -> 'b t -> ('a * 'b) t
 	val zip2_longest : 'a t -> 'b t -> 'a -> 'b -> ('a * 'b) t
+	val altern2      : 'a t -> 'a t -> 'a t
 	val firsts       : int -> 'a t -> 'a t
 	val lasts        : int -> 'a t -> 'a t
 	val groupby      : 'a t -> ('a -> 'b) -> ('b * 'a t) t (* group consecutive similar values *)

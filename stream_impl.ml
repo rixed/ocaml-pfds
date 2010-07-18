@@ -141,6 +141,10 @@ struct
 			and h2 = if is_empty t2 then x2 else head t2 in
 			lazy (Cons ((h1, h2), zip2_longest (tail t1) (tail t2) x1 x2))
 
+	let rec altern2 t1 t2 = match t1 with
+		| lazy Nil -> lazy Nil
+		| lazy (Cons (h1, t1')) -> lazy (Cons (h1, altern2 t2 t1'))
+
 	let rec firsts n = function
 		| lazy Nil as nil -> nil
 		| lazy (Cons (x, t')) -> if n <= 0 then empty else lazy (Cons (x, firsts (n-1) t'))
