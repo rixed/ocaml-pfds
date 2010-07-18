@@ -12,15 +12,15 @@ struct
 		| [], r -> List.rev r, []
 		| t -> t
 	
-	let snoc (f, r) x = checkf (f, x :: r)
+	let snoc (f, r) x = checkf (f, x::r)
 	
 	let head = function
 		| [], _ -> raise Empty
-		| x :: _, _ -> x
+		| x::_, _ -> x
 	
 	let tail = function
 		| [], _ -> raise Empty
-		| _ :: f, r -> checkf (f, r)
+		| _::f, r -> checkf (f, r)
 end
 
 module Batched_queue : QUEUE = Batched_queue_raw

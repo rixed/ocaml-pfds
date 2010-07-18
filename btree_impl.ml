@@ -3,8 +3,8 @@ open Pfds_intf
 module Unbalanced_set_raw (Ord : ORDERED) =
 struct
 	(* FIXME: use a finite_map, with 'a = unit *)
-	type elmt = Ord.t
-	type t = E | T of (t * elmt * t)
+	type e = Ord.t
+	type t = E | T of (t * e * t)
 
 	let empty = E
 	let is_empty = function
@@ -55,5 +55,5 @@ struct
 end
 
 module Unbalanced_set (Ord : ORDERED) :
-	SET with type elmt = Ord.t = Unbalanced_set_raw (Ord)
+	SET with type e = Ord.t = Unbalanced_set_raw (Ord)
 

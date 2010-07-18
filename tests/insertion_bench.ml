@@ -3,10 +3,10 @@ open Pfds_intf
 module type INSERABLE =
 sig
 	type t
-	type elmt = String.t
+	type e = String.t
 	val empty    : t
 	val is_empty : t -> bool
-	val insert   : t -> elmt -> t
+	val insert   : t -> e -> t
 end
 
 module Ins1 : INSERABLE = Btree_impl.Unbalanced_set_raw (String)

@@ -1,6 +1,6 @@
 open Pfds_intf
 
-module Heap_test (Heap : HEAP with type elmt = String.t) =
+module Heap_test (Heap : HEAP with type e = String.t) =
 struct
 	open Heap
 	

@@ -2,8 +2,8 @@ open Pfds_intf
 
 module Leftist_heap_raw (Ord : ORDERED) =
 struct
-	type elmt = Ord.t
-	type t = E | T of int * elmt * t * t
+	type e = Ord.t
+	type t = E | T of int * e * t * t
 
 	let empty = E
 	let is_empty = function E -> true | _ -> false
@@ -32,5 +32,5 @@ struct
 end
 
 module Leftist_heap (Ord : ORDERED) :
-	HEAP with type elmt = Ord.t = Leftist_heap_raw(Ord)
+	HEAP with type e = Ord.t = Leftist_heap_raw(Ord)
 

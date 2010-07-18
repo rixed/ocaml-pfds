@@ -1,6 +1,6 @@
 open Pfds_intf
 
-module Set_test (Set : SET with type elmt = String.t) =
+module Set_test (Set : SET with type e = String.t) =
 struct
 	open Set
 	

@@ -3,11 +3,11 @@ open Pfds_intf
 (* TODO: why not use stacks instead of these lists ? *)
 module Binomial_heap_raw (Ord : ORDERED) =
 struct
-	type elmt = Ord.t
+	type e = Ord.t
 
 	module Tree =
 	struct
-		type t = elmt * t list
+		type t = e * t list
 	
 		let singleton x = x, []
 		let root (x, _) = x
@@ -62,5 +62,5 @@ struct
 end
 
 module Binomial_heap (Ord : ORDERED) :
-	HEAP with type elmt = Ord.t = Binomial_heap_raw (Ord)
+	HEAP with type e = Ord.t = Binomial_heap_raw (Ord)
 

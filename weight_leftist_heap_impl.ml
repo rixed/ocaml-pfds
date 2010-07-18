@@ -3,8 +3,8 @@ open Pfds_intf
 (* Same as Leftist_heap but with size instead of rank *)
 module Weight_leftist_heap_raw (Ord : ORDERED) =
 struct
-	type elmt = Ord.t
-	type t = E | T of int * elmt * t * t
+	type e = Ord.t
+	type t = E | T of int * e * t * t
 
 	let empty = E
 	let is_empty = function E -> true | _ -> false
@@ -42,5 +42,5 @@ struct
 end
 
 module Weight_leftist_heap (Ord : ORDERED) :
-	HEAP with type elmt = Ord.t = Weight_leftist_heap_raw (Ord)
+	HEAP with type e = Ord.t = Weight_leftist_heap_raw (Ord)
 

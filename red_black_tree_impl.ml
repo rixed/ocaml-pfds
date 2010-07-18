@@ -2,9 +2,9 @@ open Pfds_intf
 
 module Red_black_tree_raw (Ord : ORDERED) =
 struct
-	type elmt = Ord.t
+	type e = Ord.t
 	type color = R | B
-	type t = E | T of (color * t * elmt * t)
+	type t = E | T of (color * t * e * t)
 
 	let empty = E
 	let is_empty = function E -> true | _ -> false
@@ -75,4 +75,4 @@ struct
 end
 
 module Red_black_tree (Ord : ORDERED) :
-	SET with type elmt = Ord.t = Red_black_tree_raw (Ord)
+	SET with type e = Ord.t = Red_black_tree_raw (Ord)
