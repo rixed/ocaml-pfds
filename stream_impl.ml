@@ -62,11 +62,21 @@ struct
 		| lazy Nil -> lazy Nil
 		| lazy (Cons (x, t')) -> lazy (Cons (f x, map t' f))
 	
+	let rec map2 t1 t2 f = match t1, t2 with
+		| lazy Nil, _ -> lazy Nil
+		| _, lazy Nil -> lazy Nil
+		| lazy (Cons (x1, t1')), lazy (Cons (x2, t2')) ->
+			lazy (Cons (f x1 x2, map2 t1' t2' f))
+	
 	let mapi t f =
 		let rec aux i t = match t with
 			| lazy Nil -> lazy Nil
 			| lazy (Cons (x, t')) -> lazy (Cons (f i x, aux (i+1) t')) in
 		aux 0 t
+	
+	let rec iter t f = match t with
+		| lazy Nil -> ()
+		| lazy (Cons (x, t')) -> f x ; iter t' f
 
 	let rec fold t b f = match t with
 		| lazy Nil -> b
