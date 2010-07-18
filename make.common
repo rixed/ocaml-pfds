@@ -1,12 +1,13 @@
 OCAMLC   = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlc
 OCAMLOPT = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlopt
 OCAMLDEP = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamldep
+OCAMLDOC = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamldoc -rectypes -keep-code -html -all-params -colorize-code
 override OCAMLOPTFLAGS += $(INCS) -w Ael -g -rectypes
 override OCAMLFLAGS    += $(INCS) -w Ael -g -rectypes
 
 all:
 
-.PHONY: all opt clean clean-spec install uninstall reinstall
+.PHONY: all opt clean clean-spec install uninstall reinstall doc
 
 ifdef PKG_NAME
 OBJECTS  = $(SOURCES:.ml=.cmo)
@@ -50,5 +51,9 @@ clean: clean-spec
 # Dependencies
 .depend: *.ml
 	$(OCAMLDEP) -package "$(REQUIRES)" -I .. $^ > $@
+
+doc: $(wildcard *.ml)
+	mkdir -p $@
+	$(OCAMLDOC) -d doc $^
 
 include .depend
