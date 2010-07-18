@@ -18,7 +18,7 @@ struct
 				add_one (insert s str) (n-1) in
 		let count s =
 			let c = ref 0 in
-			iter s (fun _ -> incr c) ;
+			iter (fun _ -> incr c) s ;
 			!c in
 		let nb = 10 in
 		let set = add_one empty nb in

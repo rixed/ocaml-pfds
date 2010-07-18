@@ -64,12 +64,14 @@ struct
 		check_invariants t' ;
 		t'
 	
-	let rec iter t f = match t with
+	let rec iter f = function
 		| E -> ()
 		| T (_, l, x, r) ->
-			iter l f ;
+			iter f l ;
 			f x ;
-			iter r f
+			iter f r
+	
+	include Iterable_impl.Iterable_from_iter (struct type t' = t type e' = e let iter = iter end)
 end
 
 module Red_black_tree (Ord : ORDERED) :

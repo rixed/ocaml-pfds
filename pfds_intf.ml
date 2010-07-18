@@ -1,12 +1,42 @@
 exception Empty
 exception Out_of_bound
 
-module type STACK =
+module type ITERABLE =
+sig
+	type t
+	type e
+
+	val empty      : t
+	val is_empty   : t -> bool
+	val singleton  : e -> t
+	val length     : t -> int
+	val iter       : (e -> unit) -> t -> unit
+	val iteri      : (int -> e -> unit) -> t -> unit
+	val fold_left  : ('a -> e -> 'a) -> 'a -> t -> 'a
+	val fold_right : (e -> 'a -> 'a) -> t -> 'a -> 'a
+end
+
+module type ITERABLE_GEN =
 sig
 	type 'a t
 
-	val empty    : 'a t
-	val is_empty : 'a t -> bool
+	val empty      : 'a t
+	val is_empty   : 'a t -> bool
+	val singleton  : 'a -> 'a t
+	val length     : 'a t -> int
+	val iter       : ('a -> unit) -> 'a t -> unit
+	val iteri      : (int -> 'a -> unit) -> 'a t -> unit
+	val map        : ('a -> 'b) -> 'a t -> 'b t
+	val mapi       : (int -> 'a -> 'b) -> 'a t -> 'b t
+	val fold_left  : ('b -> 'a -> 'b) -> 'b -> 'a t -> 'b
+	val fold_right : ('a -> 'b -> 'b) -> 'a t -> 'b -> 'b
+
+end
+
+module type STACK =
+sig
+	include ITERABLE_GEN
+
 	val cons     : 'a -> 'a t -> 'a t (* args should be the other way around *)
 	val head     : 'a t -> 'a   (* raises Empty if the stack is empty *)
 	val tail     : 'a t -> 'a t (* raises Empty if the stack is empty *)
@@ -28,20 +58,16 @@ end
 
 module type SET =
 sig
-	type t
-	type elmt
+	include ITERABLE
 
-	val empty     : t
-	val is_empty  : t -> bool
-	val singleton : elmt -> t
-	val insert    : t -> elmt -> t
-	val member    : t -> elmt -> bool
-	val iter      : t -> (elmt -> unit) -> unit (* FIXME: include iterable *)
+	val insert    : t -> e -> t
+	val member    : t -> e -> bool
 	(* TODO : delete... *)
 end
 
 module type FINITE_MAP =
 sig
+	(* FIXME : use ITERABLE *)
 	type 'a t
 	type key
 
@@ -53,15 +79,16 @@ end
 
 module type HEAP =
 sig
+	(* FIXME : use ITERABLE *)
 	type t
-	type elmt
+	type e
 
 	val empty      : t
 	val is_empty   : t -> bool
-	val singleton  : elmt -> t
-	val insert     : t -> elmt -> t
+	val singleton  : e -> t
+	val insert     : t -> e -> t
 	val merge      : t -> t -> t
-	val min        : t -> elmt (* raises Empty if t is empty *)
+	val min        : t -> e (* raises Empty if t is empty *)
 	val delete_min : t -> t    (* raises Empty if t is empty *)
 end
 
@@ -69,12 +96,13 @@ module type HEAP_OPS =
 sig
 	module Heap : HEAP
 
-	val of_list : Heap.elmt list -> Heap.t
+	val of_list : Heap.e list -> Heap.t
 	val length  : Heap.t -> int
 end
 
 module type QUEUE =
 sig
+	(* FIXME : use ITERABLE *)
 	type 'a t
 
 	val empty     : 'a t
@@ -87,6 +115,7 @@ end
 
 module type DEQUEUE =
 sig
+	(* FIXME : use ITERABLE *)
 	type 'a t
 
 	val empty     : 'a t
