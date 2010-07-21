@@ -16,6 +16,7 @@ sig
 	(* List like interface *)
 	val head         : 'a t -> 'a
 	val tail         : 'a t -> 'a t
+	val cons         : 'a -> 'a t -> 'a t
 	val nth          : 'a t -> int -> 'a
 	val length       : 'a t -> int
 	val cat          : 'a t -> 'a t -> 'a t

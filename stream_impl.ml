@@ -44,6 +44,8 @@ struct
 		| lazy Nil as nil -> nil
 		| lazy (Cons (_, t)) -> t
 	
+	let cons x t = lazy (Cons (x, t))
+
 	let rec nth t n =
 		if n = 0 then head t
 		else nth (tail t) (n-1)
