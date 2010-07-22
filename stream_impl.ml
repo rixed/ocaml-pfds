@@ -12,9 +12,11 @@ struct
 	 * variables named "t" are lazy lists,
 	 * variables named "tt" are lazy lists of lazy lists.
 	 * There are no such monstruosities as lazy lists of lazy lists of lazy lists. *)
-	
+
 	let empty = lazy Nil
-	let is_empty t = t = lazy Nil
+	let is_empty = function
+		| lazy Nil -> true
+		| _ -> false
 
 	(* Convertion / Creation *)
 
@@ -33,49 +35,54 @@ struct
 		| h :: t -> lazy (Cons (h, of_list t))
 
 	let rec of_succ succ first = lazy (Cons (first, of_succ succ (succ first)))
+	let nat = of_succ ((+) 1) 0
 
 	(* List like interface *)
-	
+
 	let head = function
 		| lazy Nil -> raise Empty
 		| lazy (Cons (x, _)) -> x
-	
+
 	let tail = function
 		| lazy Nil as nil -> nil
 		| lazy (Cons (_, t)) -> t
-	
+
 	let cons x t = lazy (Cons (x, t))
 
 	let rec nth t n =
 		if n = 0 then head t
 		else nth (tail t) (n-1)
-	
+
 	let length t =
 		let rec aux n = function
 			| lazy Nil -> n
 			| lazy (Cons (_, t')) -> aux (n+1) t' in
 		aux 0 t
 
-	let rec cat t1 t2 = match t1 with
-		| lazy Nil -> t2
-		| lazy (Cons (x, t1')) -> lazy (Cons (x, cat t1' t2))
-	
-	let rec map t f = match t with
-		| lazy Nil -> lazy Nil
-		| lazy (Cons (x, t')) -> lazy (Cons (f x, map t' f))
-	
-	let rec map2 t1 t2 f = match t1, t2 with
-		| lazy Nil, _ -> lazy Nil
-		| _, lazy Nil -> lazy Nil
+	let rec cat t1 t2 = lazy (match t1 with
+		| lazy Nil -> Lazy.force t2
+		| lazy (Cons (x, t1')) -> Cons (x, cat t1' t2)
+	)
+
+	let rec map t f = lazy (match t with
+		| lazy Nil -> Nil
+		| lazy (Cons (x, t')) -> Cons (f x, map t' f)
+	)
+
+	let rec map2 t1 t2 f = lazy (match t1, t2 with
+		| lazy Nil, _ -> Nil
+		| _, lazy Nil -> Nil
 		| lazy (Cons (x1, t1')), lazy (Cons (x2, t2')) ->
-			lazy (Cons (f x1 x2, map2 t1' t2' f))
-	
+			Cons (f x1 x2, map2 t1' t2' f)
+	)
+
 	let mapi t f =
-		let rec aux i t = match t with
-			| lazy Nil -> lazy Nil
-			| lazy (Cons (x, t')) -> lazy (Cons (f i x, aux (i+1) t')) in
+		let rec aux i t = lazy (match t with
+				| lazy Nil -> Nil
+				| lazy (Cons (x, t')) -> (Cons (f i x, aux (i+1) t'))
+			) in
 		aux 0 t
-	
+
 	let rec iter t f = match t with
 		| lazy Nil -> ()
 		| lazy (Cons (x, t')) -> f x ; iter t' f
@@ -85,22 +92,26 @@ struct
 		| lazy (Cons (x, t')) -> fold t' (f x b) f
 
 	let rec filter t f = match t with
-		| lazy Nil as nil -> nil
+		| lazy Nil -> empty
 		| lazy (Cons (x, t')) -> if f x then lazy (Cons (x, filter t' f)) else filter t' f
-	
+
+	let rec mask t f d = match t with
+		| lazy Nil -> empty
+		| lazy (Cons (x, t')) -> lazy (Cons ((if f x then x else d), mask t' f d))
+
 	(* Generators *)
-	
+
 	let cycle t =
-		if is_empty t then raise Empty ;
+		if is_empty t then empty else
 		let rec aux = function
 			| lazy Nil -> aux t
 			| lazy (Cons (x, t')) -> lazy (Cons (x, aux t')) in
 		aux t
-	
+
 	let rec repeat ?count x = match count with
 		| None -> lazy (Cons (x, repeat x))
 		| Some n -> if n <= 0 then empty else lazy (Cons (x, repeat ~count:(n-1) x))
-	
+
 	let rec stammer n = function
 		| lazy Nil as nil -> nil
 		| lazy (Cons (x, t')) -> lazy (Cons (x, cat (repeat ~count:(n-1) x) (stammer n t')))
@@ -108,19 +119,22 @@ struct
 	let rec dropwhile f t = match t with
 		| lazy Nil as nil -> nil
 		| lazy (Cons (x, t')) -> if f x then dropwhile f t' else t
-	
+
 	let rec takewhile f t = match t with
 		| lazy Nil as nil -> nil
 		| lazy (Cons (x, t')) -> if f x then lazy (Cons (x, takewhile f t')) else empty
 
 	let rec skip n t = if n = 0 then t else skip (n-1) (tail t)
 
-	let one_every n t =
-		let rec aux n' = function
-			| lazy Nil as nil -> nil
-			| lazy (Cons (x, t')) ->
-				if n' = 1 then lazy (Cons (x, aux n t')) else aux (n'-1) t' in
-		aux 1 t
+	let rec one_every n t =
+		let rec skip' n t =
+			if n = 0 then take_one t else match t with
+			| Nil -> Nil
+			| Cons (_, lazy t') -> skip' (n-1) t'
+		and take_one = function
+			| Nil -> Nil
+			| Cons (x, t') -> (Cons (x, lazy (skip' (n-1) (Lazy.force t')))) in
+		lazy (take_one (Lazy.force t))
 
 	let slice ?(step=1) ?dropwhile:du ?takewhile:da t =
 		let cut_head = match du with
@@ -147,10 +161,11 @@ struct
 		| lazy Nil -> lazy Nil
 		| lazy (Cons (h1, t1')) -> lazy (Cons (h1, altern2 t2 t1'))
 
-	let rec firsts n = function
-		| lazy Nil as nil -> nil
-		| lazy (Cons (x, t')) -> if n <= 0 then empty else lazy (Cons (x, firsts (n-1) t'))
-	
+	let rec firsts n t = lazy (match t with
+		| lazy Nil -> Nil
+		| lazy (Cons (x, t')) -> if n <= 0 then Nil else Cons (x, firsts (n-1) t')
+	)
+
 	let lasts n t =
 		let rec aux h' = function
 			| lazy Nil -> h'
@@ -186,23 +201,23 @@ struct
 				else lazy (Cons (x, aux k_x t')) in
 		if is_empty t then empty else
 			let h = head t in lazy (Cons (h, aux (f_key h) t))
-	
+
 	(* Combinatoric generators *)
 
 	(* ziphead {{1,2},{3,4,5},{6,7}} = {1,3,6} *)
 	let rec ziphead = function
 		| lazy Nil -> empty
 		| lazy (Cons (t, tt')) -> lazy (Cons (head t, ziphead tt'))
-	
+
 	(* ziptail {{1,2},{3,4,5},{6,7}} = {{2},{4,5},{7}} *)
 	let rec ziptail = function
 		| lazy Nil -> empty
 		| lazy (Cons (t, tt')) -> lazy (Cons (tail t, ziptail tt'))
-	
+
 	(* zip {{1,2},{3,4,5},{6,7}} = {{1,3,6},{2,4,7}} *)
 	let zip tt =
 		let rec aux tt' =
-			let some_empty = fold tt' false (fun t e -> if e then true else is_empty t) in
+			let some_empty = fold tt' false (fun t e -> e || is_empty t) in	(* FIXME: use a skip_until *)
 			if some_empty then empty
 			else lazy (Cons (ziphead tt', aux (ziptail tt'))) in
 		if is_empty tt then empty else aux tt
@@ -216,7 +231,7 @@ struct
 				let l = length t in
 				next_stam * l, cat new_tt (singleton (cycle next_t))) in
 		firsts req_len (zip stt)
-	
+
 	let power t n =
 		let rec rep n =
 			if n = 0 then empty
@@ -236,7 +251,7 @@ struct
 		let rec perms' n li lo t =
 			if n = li then empty else
 			cat (prepend_all (head t) (perms (li-1) (lo-1) (firsts (li-1) (tail t))))
-			    (perms' (n+1) li lo (tail t))
+				(perms' (n+1) li lo (tail t))
 		and perms li lo t =
 			if lo = 0 then empty else
 			let t' = cycle t in
@@ -251,8 +266,8 @@ struct
 			if len = 0 then singleton empty
 			else if ll = 0 then empty
 			else cat (prepend_all (head t) (combs (tail t) (len-1) ll))
-			    	 (combs (tail t) len (ll-1)) in
-		if is_empty t or len = 0 then empty 
+					 (combs (tail t) len (ll-1)) in
+		if is_empty t or len = 0 then empty
 		else combs t len (li - len + 1)
 end
 

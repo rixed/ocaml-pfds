@@ -19,8 +19,9 @@ opt: $(XARCHIVE)
 check: $(ARCHIVE) $(XARCHIVE)
 	@cd tests && $(MAKE) $(MAKEFLAGS) all opt
 	@for t in tests/*_test.byte tests/*_test.opt ; do \
-		$$t ; \
-	done
+		$$t || echo "FAILED" ; \
+	done ; \
+	echo "OK"
 
 clean-spec:
 

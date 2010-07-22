@@ -65,7 +65,8 @@ let gen_check () =
 	assert (length (one_every 3 (firsts 1 nat)) = 1) ;
 	assert (length (one_every 3 (firsts 0 nat)) = 0) ;
 	assert (head (one_every 3 (firsts 30 nat)) = 0) ;
-	assert (length (lasts 3 (firsts 30 nat)) = 3)
+	assert (length (lasts 3 (firsts 30 nat)) = 3) ;
+	assert (is_empty (cycle empty))
 
 let group_check () =
 	let t = of_list [ 1 ; 1 ; 2 ; 2 ; 2 ; 3 ; 4 ; 4 ] in
@@ -129,16 +130,26 @@ let comb_check () =
 	check t 4 [ [0;1;2;3] ; [0;1;2;4] ; [0;1;3;4] ; [0;2;3;4] ; [1;2;3;4] ] ;
 	check t 3 [ [0;1;2] ; [0;1;3] ; [0;1;4] ; [0;2;3] ; [0;2;4] ; [0;3;4] ;
 	            [1;2;3] ; [1;2;4] ; [1;3;4] ;
-				[2;3;4] ] ;
+	            [2;3;4] ] ;
 	check t 2 [ [0;1] ; [0;2] ; [0;3] ; [0;4] ;
 	            [1;2] ; [1;3] ; [1;4] ;
-				[2;3] ; [2;4] ;
-				[3;4] ] ;
+	            [2;3] ; [2;4] ;
+	            [3;4] ] ;
 	check t 1 [ [0] ; [1] ; [2] ; [3] ; [4] ] ;
 	check t 0 [] ;
 	check empty 0 [] ;
 	check_fail (combinations 1) empty ;
 	check_fail (combinations 6) t
+
+(* Check that in some interresting situations items are computed only once *)
+let uniq_check () =
+	(* one_every must not compute not required items *)
+	let s = of_succ (fun x -> assert (x = 0) ; x + 1) 0 in
+	let s' = one_every 4000 s in
+	let s'' = one_every 4000 s' in
+	ignore (head s'') ;
+	ignore (head (map s'' float_of_int)) ;
+	ignore (zip (of_list [ s ; s' ; s'' ]))
 
 (* Now for more realistic examples *)
 
@@ -189,6 +200,7 @@ let () =
 	prod_check () ;
 	perm_check () ;
 	comb_check () ;
+	uniq_check () ;
 	fibo_check () ;
 	root_check ()
 

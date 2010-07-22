@@ -5,6 +5,7 @@ sig
 
 	val empty        : 'a t
 	val is_empty     : 'a t -> bool
+	val nat          : int t
 
 	(* Convertion / Creation *)
 	val singleton    : 'a -> 'a t
@@ -26,6 +27,7 @@ sig
 	val iter         : 'a t -> ('a -> unit) -> unit
 	val fold         : 'a t -> 'b -> ('a -> 'b -> 'b) -> 'b
 	val filter       : 'a t -> ('a -> bool) -> 'a t
+	val mask         : 'a t -> ('a -> bool) -> 'a -> 'a t
 	
 	(* Generators *)
 	val cycle        : 'a t -> 'a t
