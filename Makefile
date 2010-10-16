@@ -6,9 +6,10 @@ SOURCES  = \
 	weight_leftist_heap_impl.ml heap_ops_impl.ml \
 	binomial_heap_impl.ml red_black_tree_impl.ml \
 	stream_intf.ml stream_impl.ml \
-	batched_queue_impl.ml dequeue_impl.ml
+	batched_queue_impl.ml dequeue_impl.ml \
+	ring_impl.ml
 
-REQUIRES =
+REQUIRES = bricabrac
 
 include make.common
 

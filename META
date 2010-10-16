@@ -1,5 +1,5 @@
 description = "Purely Functional Data Structures (from Okasaki)"
 version = "1"
-requires = ""
+requires = "bricabrac"
 archive(byte) = "pfds.cma"
 archive(native) = "pfds.cmxa"

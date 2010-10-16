@@ -7,6 +7,7 @@ PROGRAMS = \
 	stream_test.byte \
 	queue_test.byte \
 	dequeue_test.byte \
+	ring_test.byte \
 	insertion_bench.byte
 
 include ../make.common

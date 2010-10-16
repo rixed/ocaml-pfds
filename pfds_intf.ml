@@ -30,7 +30,6 @@ sig
 	val mapi       : (int -> 'a -> 'b) -> 'a t -> 'b t
 	val fold_left  : ('b -> 'a -> 'b) -> 'b -> 'a t -> 'b
 	val fold_right : ('a -> 'b -> 'b) -> 'a t -> 'b -> 'b
-
 end
 
 module type STACK =
@@ -60,9 +59,17 @@ module type SET =
 sig
 	include ITERABLE
 
-	val insert    : t -> e -> t
-	val member    : t -> e -> bool
+	val insert : t -> e -> t
+	val member : t -> e -> bool
 	(* TODO : delete... *)
+end
+
+module type SET_GEN =
+sig
+	include ITERABLE_GEN
+
+	val insert : 'a t -> 'a -> 'a t
+	val member : 'a t -> 'a -> bool
 end
 
 module type FINITE_MAP =
@@ -130,5 +137,30 @@ sig
 	val last      : 'a t -> 'a    (* raises Empty if t is empty *)
 	val init      : 'a t -> 'a t  (* raises Empty if t is empty *)
 end	
+
+module type RING_GEN =
+sig
+	include ITERABLE_GEN
+
+	val get           : 'a t -> 'a
+	val next          : 'a t -> 'a t
+	val prev          : 'a t -> 'a t
+	val insert_before : 'a t -> 'a -> 'a t
+	val insert_after  : 'a t -> 'a -> 'a t
+	val remove        : 'a t -> 'a t
+	(* Same as iter, fold_left, etc, but call function with whole ring instead of the single element *)
+	val iterr         : ('a t -> unit) -> 'a t -> unit
+	val iterir        : (int -> 'a t -> unit) -> 'a t -> unit
+	val fold_leftr    : ('b -> 'a t -> 'b) -> 'b -> 'a t -> 'b
+	val fold_rightr   : ('a t -> 'b -> 'b) -> 'a t -> 'b -> 'b
+end
+
+module type SORTLIST_GEN =
+sig
+	include ITERABLE_GEN
+
+	val insert : 'a t -> 'a -> 'a t
+	val remove : 'a t -> 'a -> 'a t
+end
 
 (* CATLIST... *)
