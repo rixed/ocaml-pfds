@@ -1,5 +1,5 @@
-OCAMLC   = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlc
-OCAMLOPT = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlopt
+OCAMLC   = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlc -thread
+OCAMLOPT = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlopt -thread
 OCAMLDEP = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamldep
 OCAMLDOC = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamldoc -rectypes -keep-code -html -all-params -colorize-code
 override OCAMLOPTFLAGS += $(INCS) -w Ael -g -rectypes
@@ -56,4 +56,4 @@ doc: $(wildcard *.ml)
 	mkdir -p $@
 	$(OCAMLDOC) -d doc $^
 
-include .depend
+-include .depend
