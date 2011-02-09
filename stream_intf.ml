@@ -5,7 +5,6 @@ sig
 
 	val empty        : 'a t
 	val is_empty     : 'a t -> bool
-	val nat          : int t
 
 	(* Convertion / Creation *)
 	val singleton    : 'a -> 'a t
@@ -13,6 +12,8 @@ sig
 	val to_list      : 'a t -> 'a list
 	val of_list      : 'a list -> 'a t
 	val of_succ      : ('a -> 'a) -> 'a -> 'a t
+	val nat          : int t
+	val range        : int -> int -> int t
 
 	(* List like interface *)
 	val head         : 'a t -> 'a
@@ -51,5 +52,10 @@ sig
 	val product      : 'a t t -> 'a t t (* {{1,2,3},{3,4}} -> {{1,3},{1,4},{2,3},{2,4},{3,3},..} *)
 	val permutations : ?len:int -> 'a t -> 'a t t (* {1,2,3} -> {{1,2,3},{1,3,2},{2,1,3},..} *)
 	val combinations : int -> 'a t -> 'a t t (* {1,2,3},2 -> {{1,2},{1,3},{2,3}} *)
+
+	(* Utilities *)
+	val (--)         : int -> int -> int t	(* Same as range *)
+	val (//)         : 'a t -> ('a -> bool) -> 'a t (* Same as filter *)
+
 end
 

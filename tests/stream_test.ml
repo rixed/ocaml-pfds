@@ -39,7 +39,9 @@ let list_check () =
 	assert (to_list (map t (fun x -> -x)) = [-1 ; -2 ; -3 ]) ;
 	assert (to_list (mapi t (fun i _ -> i)) = [ 0 ; 1 ; 2 ]) ;
 	assert (fold t 0 (+) = 6) ;
-	assert (to_list (filter t (fun x -> x land 1 = 0)) = [ 2 ])
+	let even x = x land 1 = 0 in
+	assert (to_list (t // even) = [ 2 ]) ;
+	assert (to_list (3 -- 5) = [ 3 ; 4 ; 5 ])
 
 let cat_check () =
 	reset () ;

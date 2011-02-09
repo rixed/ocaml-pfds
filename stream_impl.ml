@@ -35,7 +35,7 @@ struct
 		| h :: t -> lazy (Cons (h, of_list t))
 
 	let rec of_succ succ first = lazy (Cons (first, of_succ succ (succ first)))
-	let nat = of_succ ((+) 1) 0
+	let nat = of_succ succ 0
 
 	(* List like interface *)
 
@@ -202,6 +202,10 @@ struct
 		if is_empty t then empty else
 			let h = head t in lazy (Cons (h, aux (f_key h) t))
 
+	(* More constructors *)
+	let range start stop =
+		let n = stop - start + 1 in firsts n (of_succ succ start)
+
 	(* Combinatoric generators *)
 
 	(* ziphead {{1,2},{3,4,5},{6,7}} = {1,3,6} *)
@@ -269,6 +273,12 @@ struct
 					 (combs (tail t) len (ll-1)) in
 		if is_empty t or len = 0 then empty
 		else combs t len (li - len + 1)
+	
+	(* Utilities *)
+
+	let (--) a b = range a b
+	let (//) t f = filter t f
+
 end
 
 module Stream : STREAM = Stream_raw
