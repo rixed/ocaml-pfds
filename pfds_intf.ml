@@ -13,7 +13,7 @@ sig
 	val iter       : (e -> unit) -> t -> unit
 	val iteri      : (int -> e -> unit) -> t -> unit
 	val fold_left  : ('a -> e -> 'a) -> 'a -> t -> 'a
-	val fold_right : (e -> 'a -> 'a) -> t -> 'a -> 'a
+	val fold_right : (e -> 'a -> 'a) -> t -> 'a -> 'a	(* FIXME: must iterate from right to left! *)
 end
 
 module type ITERABLE_GEN =
@@ -163,4 +163,21 @@ sig
 	val remove : 'a t -> 'a -> 'a t
 end
 
-(* CATLIST... *)
+module type ROPE_GEN =
+sig
+	include ITERABLE_GEN
+
+	val of_list   : 'a list -> 'a t
+	val of_array  : 'a array -> 'a t
+	val of_string : string -> char t
+	val to_list   : 'a t -> 'a list
+	val to_array  : 'a t -> 'a array
+	val to_string : char t -> string
+
+	val cat       : 'a t -> 'a t -> 'a t
+	val cut       : 'a t -> int -> int -> 'a t
+	val insert    : 'a t -> int -> 'a t -> 'a t
+	val sub       : 'a t -> int -> int -> 'a t
+	val nth       : 'a t -> int -> 'a
+end
+
