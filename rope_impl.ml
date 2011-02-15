@@ -5,49 +5,57 @@ struct
 	(* ITERABLE_GEN *)
 
 	type 'a t =
-		| Leaf of 'a array
+		| Leaf of (int (* length *) * int (* offset *) * (int -> 'a) (* getter *))
 		| Cat of (int (* total length *) * 'a t (* left part *) * 'a t (* right part *))
 
-	let empty = Leaf [||]
+	let empty = Leaf (0, 0, fun _ -> assert false)
 
 	let is_empty = function
-		| Leaf [||] -> true
+		| Leaf (0, _, _) -> true
 		| _ -> false
 	
-	let singleton e = Leaf [| e |]
+	let singleton e = Leaf (1, 0, fun x -> assert (x=0) ; e)
 
 	let length = function
-		| Leaf a -> Array.length a
+		| Leaf (n, _, _) -> n
 		| Cat (n, _, _) -> n
 	
 	let iteri f t =
 		let rec aux i = function
-			| Leaf a -> Array.iteri (fun ii e -> f (ii+i) e) a
+			| Leaf (n, o, get) -> for ii = 0 to n-1 do f (ii+i) (get (ii+o)) done
 			| Cat (_, l, r) -> aux 0 l ; aux (length l) r in
 		aux 0 t
 
 	let rec iter f = function
-		| Leaf a -> Array.iter f a
+		| Leaf (n, o, get) -> for i = 0 to n-1 do f (get (i+o)) done
 		| Cat (_, l, r) -> iter f l ; iter f r
 	
 	let mapi f t =
 		let rec aux i = function
-			| Leaf a -> Leaf (Array.mapi (fun ii e -> f (ii+i) e) a)
+			| Leaf (n, o, get) -> Leaf (n, 0, fun ii -> f (i+ii) (get (o+ii)))
 			| Cat (n, l, r) -> Cat (n, aux 0 l, aux (length l) r) in
 		aux 0 t
 	
 	let rec map f = function
-		| Leaf a -> Leaf (Array.map f a)
+		| Leaf (n, o, get) -> Leaf (n, 0, fun ii -> f (get (o+ii)))
 		| Cat (n, l, r) -> Cat (n, map f l, map f r)
 	
 	let rec fold_left f s = function
-		| Leaf a -> Array.fold_left f s a
+		| Leaf (n, o, get) ->
+			let rec aux i s =
+				if i >= n-1 then s
+				else aux (i+1) (f s (get (o+i))) in
+			aux 0 s
 		| Cat (_, l, r) ->
 			let s' = fold_left f s l in
 			fold_left f s' r
 	
 	let rec fold_right f t s = match t with
-		| Leaf a -> Array.fold_right f a s
+		| Leaf (n, o, get) ->
+			let rec aux i s =
+				if i <= 0 then s
+				else aux (i-1) (f (get (o+i)) s) in
+			aux (n-1) s
 		| Cat (_, l, r) ->
 			let s' = fold_right f r s in
 			fold_right f l s'
@@ -58,7 +66,7 @@ struct
 		Cat (length l + length r, l, r)
 
 	let rec sub t start stop = match t with
-		| Leaf a -> Leaf (Array.sub a start (stop-start))
+		| Leaf (n, o, get) -> assert (stop-start <= n) ; Leaf (stop-start, o+start, get)
 		| Cat (_, l, r) ->
 			let nl = length l in
 			if stop <= nl then sub l start stop
@@ -66,7 +74,7 @@ struct
 			else Cat (stop-start, sub l start nl, sub r 0 (stop-nl))
 
 	let rec nth t i = match t with
-		| Leaf a -> a.(i)
+		| Leaf (n, o, get) -> assert (i+o < n) ; get (i+o)
 		| Cat (_, l, r) ->
 			let nl = length l in
 			if i < nl then nth l i
@@ -75,7 +83,7 @@ struct
 	let rec cut t start stop =
 		let n' = length t - (stop-start) in
 		match t with
-		| Leaf a -> Leaf (Array.init n' (fun i -> if i < start then a.(i) else a.(i-start+stop)))
+		| Leaf (n, o, get) -> assert (n' <= n) ; Leaf (n', o+start, get)
 		| Cat (_, l, r) ->
 			let nl = length l in
 			if stop <= nl then Cat (n', cut l start stop, r)
@@ -91,21 +99,24 @@ struct
 		str
 	
 	let of_string str =
-		let l = String.length str in
-		let array_of_string str = Array.init l (fun i -> str.[i]) in
-		Leaf (array_of_string str)
+		let n = String.length str in
+		Leaf (n, 0, String.get str)
 
 	let to_array t =
 		let l = length t in
 		Array.init l (fun i -> nth t i)	(* FIXME: copy array by array *)
 	
-	let of_array arr = Leaf arr
+	let of_array arr =
+		let n = Array.length arr in
+		Leaf (n, 0, Array.get arr)
 
 	let to_list t =
 		let lst = fold_left (fun lst e -> e :: lst) [] t in
 		List.rev lst
 
 	let of_list lst = of_array (Array.of_list lst)
+
+	let of_func n f = Leaf (n, 0, f)
 end
 
 module Make : ROPE_GEN = Make_raw

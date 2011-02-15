@@ -170,6 +170,7 @@ sig
 	val of_list   : 'a list -> 'a t
 	val of_array  : 'a array -> 'a t
 	val of_string : string -> char t
+	val of_func   : int -> (int -> 'a) -> 'a t
 	val to_list   : 'a t -> 'a list
 	val to_array  : 'a t -> 'a array
 	val to_string : char t -> string
