@@ -171,9 +171,11 @@ sig
 	val of_array  : 'a array -> 'a t
 	val of_string : string -> char t
 	val of_func   : int -> (int -> 'a) -> 'a t
+	val of_file   : string -> char t
 	val to_list   : 'a t -> 'a list
 	val to_array  : 'a t -> 'a array
 	val to_string : char t -> string
+	val to_file   : string -> char t -> unit
 
 	val cat       : 'a t -> 'a t -> 'a t
 	val cut       : 'a t -> int -> int -> 'a t
