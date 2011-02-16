@@ -44,7 +44,7 @@ struct
 	let rec fold_left f s = function
 		| Leaf (n, o, get) ->
 			let rec aux i s =
-				if i >= n-1 then s
+				if i >= n then s
 				else aux (i+1) (f s (get (o+i))) in
 			aux 0 s
 		| Cat (_, l, r) ->
@@ -54,7 +54,7 @@ struct
 	let rec fold_right f t s = match t with
 		| Leaf (n, o, get) ->
 			let rec aux i s =
-				if i <= 0 then s
+				if i < 0 then s
 				else aux (i-1) (f (get (o+i)) s) in
 			aux (n-1) s
 		| Cat (_, l, r) ->

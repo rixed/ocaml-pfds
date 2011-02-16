@@ -30,9 +30,11 @@ struct
 		assert (nth complex 40 = 'd') ;
 		assert (to_string (sub complex 7 21) = "ck brown fox j") ;
 
-		(* map *)
+		(* iterators *)
 		let complex_up = map Char.uppercase complex in
 		assert (to_string complex_up = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG") ;
+		assert (fold_left  (fun n _ -> n+1) 0 complex_up = length complex_up) ;
+		assert (fold_right (fun _ n -> n+1) complex_up 0 = length complex_up)
 end
 
 module Rope_test1 = Rope_test (Rope_impl.Make_raw)
