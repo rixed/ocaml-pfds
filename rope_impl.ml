@@ -6,7 +6,7 @@ struct
 	(* ITERABLE_GEN *)
 
 	type 'a t =
-		| Leaf of (int (* length *) * int (* offset *) * (int -> 'a) (* getter *))
+		| Leaf of (int (* length *) * int (* offset for getter *) * (int -> 'a) (* getter *))
 		| Cat of (int (* total length *) * 'a t (* left part *) * 'a t (* right part *))
 
 	let empty = Leaf (0, 0, fun _ -> assert false)
@@ -75,7 +75,7 @@ struct
 			else Cat (stop-start, sub l start nl, sub r 0 (stop-nl))
 
 	let rec nth t i = match t with
-		| Leaf (n, o, get) -> assert (i+o < n) ; get (i+o)
+		| Leaf (n, o, get) -> assert (i < n) ; get (i+o)
 		| Cat (_, l, r) ->
 			let nl = length l in
 			if i < nl then nth l i
