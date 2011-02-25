@@ -8,6 +8,7 @@ struct
 	let () =
 		assert (is_empty empty = true) ;
 		assert (length empty = 0) ;
+		assert (is_empty (cat empty empty)) ;
 		(* convertions preserve emptiness *)
 		assert (to_string empty = "") ;
 		assert (to_array empty = [||]) ;

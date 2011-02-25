@@ -18,13 +18,13 @@ struct
 	let singleton e = Leaf (1, 0, fun x -> assert (x=0) ; e)
 
 	let length = function
-		| Leaf (n, _, _) -> n
-		| Cat (n, _, _) -> n
+		| Leaf (n, _, _) -> assert (n >= 0); n
+		| Cat (n, _, _) -> assert (n > 0); n
 	
 	let iteri f t =
 		let rec aux i = function
 			| Leaf (n, o, get) -> for ii = 0 to n-1 do f (ii+i) (get (ii+o)) done
-			| Cat (_, l, r) -> aux 0 l ; aux (length l) r in
+			| Cat (_, l, r) -> aux i l ; aux (i + (length l)) r in
 		aux 0 t
 
 	let rec iter f = function
@@ -34,7 +34,7 @@ struct
 	let mapi f t =
 		let rec aux i = function
 			| Leaf (n, o, get) -> Leaf (n, 0, fun ii -> f (i+ii) (get (o+ii)))
-			| Cat (n, l, r) -> Cat (n, aux 0 l, aux (length l) r) in
+			| Cat (n, l, r) -> Cat (n, aux i l, aux (i + (length l)) r) in
 		aux 0 t
 	
 	let rec map f = function
@@ -63,42 +63,53 @@ struct
 
 	(* ROPE_GEN *)
 
-	let cat l r = (* TODO: if l or r is small, append to left/rightmost array *)
+	let cat l r =
+		if is_empty l then r else
+		if is_empty r then l else
 		Cat (length l + length r, l, r)
 
-	let rec sub t start stop = match t with
-		| Leaf (n, o, get) -> assert (stop-start <= n) ; Leaf (stop-start, o+start, get)
+	let rec sub t start stop =
+		assert (stop >= start) ;
+		if start = stop then empty else match t with
+		| Leaf (n, o, get) ->
+			assert (start < n && stop <= n) ;
+			assert (stop >= start) ;
+			Leaf (stop-start, o+start, get)
 		| Cat (_, l, r) ->
 			let nl = length l in
 			if stop <= nl then sub l start stop
 			else if start >= nl then sub r (start-nl) (stop-nl)
-			else Cat (stop-start, sub l start nl, sub r 0 (stop-nl))
+			else cat (sub l start nl) (sub r 0 (stop-nl))
 
 	let rec nth t i = match t with
-		| Leaf (n, o, get) -> assert (i < n) ; get (i+o)
+		| Leaf (n, o, get) -> assert (i >= 0 && i < n) ; get (i+o)
 		| Cat (_, l, r) ->
 			let nl = length l in
 			if i < nl then nth l i
 			else nth r (i-nl)
 
 	let rec cut t start stop =
-		let n' = length t - (stop-start) in
-		match t with
-		| Leaf (n, o, get) -> assert (n' <= n) ; Leaf (n', o+start, get)
+		assert (stop >= start) ;
+		if start = stop then t else match t with
+		| Leaf (n, o, get) ->
+			assert (start < n && stop <= n && stop >= start) ;
+			cat (Leaf (start, o, get)) (Leaf (n-stop, stop, get))
 		| Cat (_, l, r) ->
 			let nl = length l in
-			if stop <= nl then Cat (n', cut l start stop, r)
-			else if start >= nl then Cat (n', l, cut r (start-nl) (stop-nl))
-			else Cat (n', cut l start nl, cut r 0 (stop-nl))
+			if stop <= nl then cat (cut l start stop) r
+			else if start >= nl then cat l (cut r (start-nl) (stop-nl))
+			else cat (cut l start nl) (cut r 0 (stop-nl))
 	
 	let insert t i t' =
-		cat (cat (sub t 0 i) t') (sub t i (length t))
+		let l = sub t 0 i
+		and r = sub t i (length t) in
+		cat (cat l t') r
 
 	let to_string t =
 		let str = String.create (length t) in
 		iteri (String.set str) t ;
 		str
-	
+
 	let of_string str =
 		let n = String.length str in
 		Leaf (n, 0, String.get str)
@@ -106,7 +117,7 @@ struct
 	let to_array t =
 		let l = length t in
 		Array.init l (fun i -> nth t i)	(* FIXME: copy array by array *)
-	
+
 	let of_array arr =
 		let n = Array.length arr in
 		Leaf (n, 0, Array.get arr)
