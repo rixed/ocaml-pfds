@@ -46,8 +46,13 @@ struct
 		assert (index complex 'e' = 2) ;
 		assert (rindex complex 'e' = 33) ;
 		assert (index (singleton 'a') 'a' = 0) ;
-		assert (rindex (singleton 'a') 'a' = 0)
+		assert (rindex (singleton 'a') 'a' = 0) ;
 
+		(* cut *)
+		let r = Rope.of_string "foobar" in
+		let r = Rope.cut r 2 3 in
+		let r = Rope.cut r 2 3 in
+		assert (Rope.to_string r = "foar")
 end
 
 module Rope_test1 = Rope_test (Rope_impl.Make_raw)

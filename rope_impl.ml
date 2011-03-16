@@ -92,8 +92,8 @@ struct
 		assert (stop >= start) ;
 		if start = stop then t else match t with
 		| Leaf (n, o, get) ->
-			assert (start < n && stop <= n && stop >= start) ;
-			cat (Leaf (start, o, get)) (Leaf (n-stop, stop, get))
+			assert (start < n && stop <= n) ;
+			cat (Leaf (start, o, get)) (Leaf (n-stop, o+stop, get))
 		| Cat (_, l, r) ->
 			let nl = length l in
 			if stop <= nl then cat (cut l start stop) r
