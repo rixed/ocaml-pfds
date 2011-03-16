@@ -105,6 +105,26 @@ struct
 		and r = sub t i (length t) in
 		cat (cat l t') r
 
+	let count t e =
+		fold_left (fun s e' -> if e = e' then s+1 else s) 0 t
+	
+	let index t e =
+		let idx = ref 0 in
+		try
+			iteri (fun i e' -> if e = e' then (idx := i ; raise Exit)) t ;
+			raise Not_found
+		with Exit ->
+			!idx
+	
+	let rindex t e =
+		let idx = ref 0
+		and last = length t - 1 in
+		try
+			ignore (fold_right (fun e' i -> if e = e' then (idx := i ; raise Exit) else i-1) t last) ;
+			raise Not_found
+		with Exit ->
+			!idx
+
 	let to_string t =
 		let str = String.create (length t) in
 		iteri (String.set str) t ;

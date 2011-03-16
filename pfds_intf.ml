@@ -182,5 +182,8 @@ sig
 	val insert    : 'a t -> int -> 'a t -> 'a t
 	val sub       : 'a t -> int -> int -> 'a t
 	val nth       : 'a t -> int -> 'a
+	val count     : 'a t -> 'a -> int
+	val index     : 'a t -> 'a -> int
+	val rindex    : 'a t -> 'a -> int
 end
 

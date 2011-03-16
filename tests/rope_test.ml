@@ -35,7 +35,19 @@ struct
 		let complex_up = map Char.uppercase complex in
 		assert (to_string complex_up = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG") ;
 		assert (fold_left  (fun n _ -> n+1) 0 complex_up = length complex_up) ;
-		assert (fold_right (fun _ n -> n+1) complex_up 0 = length complex_up)
+		assert (fold_right (fun _ n -> n+1) complex_up 0 = length complex_up) ;
+
+		(* count, index, rindex *)
+		assert (count complex 't' = 2) ;
+		assert (count complex 'h' = 2) ;
+		assert (count complex 'e' = 3) ;
+		assert (count (singleton 'a') 'a' = 1) ;
+		assert (count (singleton 'a') 'b' = 0) ;
+		assert (index complex 'e' = 2) ;
+		assert (rindex complex 'e' = 33) ;
+		assert (index (singleton 'a') 'a' = 0) ;
+		assert (rindex (singleton 'a') 'a' = 0)
+
 end
 
 module Rope_test1 = Rope_test (Rope_impl.Make_raw)
