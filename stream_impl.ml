@@ -1,5 +1,6 @@
 open Pfds_intf	(* for exceptions *)
 open Stream_intf
+open Bricabrac
 
 module Stream_raw =
 struct
@@ -98,6 +99,10 @@ struct
 		| lazy (Cons (x, t')) -> if f x then lazy (Cons (x, filter t' f)) else filter t' f
 
 	let (//) = filter
+
+	let map_opt t f =
+		let t = map t f in
+		map (t // ((<>) None)) unopt
 
 	let rec mask t f d = match t with
 		| lazy Nil -> empty

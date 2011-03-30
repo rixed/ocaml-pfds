@@ -81,6 +81,10 @@ let cmp_check () =
 	assert (to_list (m s4 s4) = [ 1 ; 1 ; 3 ; 3 ]) ;
 	assert (0 = c (m s3 s3) (stammer 2 s3))
 
+let map_check () =
+	let odds = map_opt nat (fun n -> if n land 1 = 1 then Some n else None) in
+	assert (to_list (firsts 4 odds) = [ 1 ; 3 ; 5 ; 7 ])
+
 let cat_check () =
 	reset () ;
 	let r1 = firsts 5 nat in
@@ -232,8 +236,9 @@ let () =
 	empty_check () ;
 	singleton_check () ;
 	list_check () ;
-	cat_check () ;
 	cmp_check () ;
+	map_check () ;
+	cat_check () ;
 	gen_check () ;
 	group_check () ;
 	zip_check () ;
