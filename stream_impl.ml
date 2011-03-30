@@ -11,7 +11,7 @@ struct
 	 * variables named "n" are integer counters while "l" are integer lengths,
 	 * variables named "t" are lazy lists,
 	 * variables named "tt" are lazy lists of lazy lists.
-	 * There are no such monstruosities as lazy lists of lazy lists of lazy lists. *)
+	 * There are no such monstruosities (so far) as lazy lists of lazy lists of lazy lists. *)
 
 	let empty = lazy Nil
 	let is_empty = function
@@ -64,6 +64,8 @@ struct
 		| lazy (Cons (x, t1')) -> Cons (x, cat t1' t2)
 	)
 
+	let (++) = cat
+
 	let rec map t f = lazy (match t with
 		| lazy Nil -> Nil
 		| lazy (Cons (x, t')) -> Cons (f x, map t' f)
@@ -94,6 +96,8 @@ struct
 	let rec filter t f = match t with
 		| lazy Nil -> empty
 		| lazy (Cons (x, t')) -> if f x then lazy (Cons (x, filter t' f)) else filter t' f
+
+	let (//) = filter
 
 	let rec mask t f d = match t with
 		| lazy Nil -> empty
@@ -205,6 +209,8 @@ struct
 	(* More constructors *)
 	let range start stop =
 		let n = stop - start + 1 in firsts n (of_succ succ start)
+	
+	let (--) = range
 
 	(* Combinatoric generators *)
 
@@ -274,10 +280,29 @@ struct
 		if is_empty t or len = 0 then empty
 		else combs t len (li - len + 1)
 	
-	(* Utilities *)
+	(* Comparison *)
 
-	let (--) a b = range a b
-	let (//) t f = filter t f
+	let cmp f a b =
+		let some x = Some x and none = singleton None in
+		let a = (map a some) ++ none
+		and b = (map b some) ++ none in
+		let s = map2 a b (fun a b -> match a, b with
+			| Some a, Some b -> f a b
+			| Some _, None   -> 1
+			| None,   Some _ -> -1
+			| None,   None   -> 0) in
+		try head (dropwhile ((=) 0) s) with Empty -> 0
+
+	let cmp_shortest f a b =
+		let s = map2 a b f in
+		try head (dropwhile ((=) 0) s) with Empty -> 0
+	
+	let rec merge f a b = match a, b with
+		| lazy Nil, x -> x
+		| x, lazy Nil -> x
+		| lazy (Cons (ha, a')), lazy (Cons (hb, b')) ->
+			if f ha hb <= 0 then lazy (Cons (ha, merge f a' b))
+			else lazy (Cons (hb, merge f a b'))
 
 end
 

@@ -43,6 +43,44 @@ let list_check () =
 	assert (to_list (t // even) = [ 2 ]) ;
 	assert (to_list (3 -- 5) = [ 3 ; 4 ; 5 ])
 
+let cmp_check () =
+	let s1 = of_list [ 1 ; 2 ; 3 ]
+	and s2 = of_list [ 1 ; 2 ; 4 ]
+	and s3 = of_list [ 1 ; 2 ; 3 ; 4 ]
+	and s4 = of_list [ 1 ; 3 ]
+	and c  = cmp compare
+	and cs = cmp_shortest compare
+	and m  = merge compare in
+	assert ( 0 = c  empty empty) ;
+	assert (-1 = c  empty nat ) ;
+	assert ( 1 = c  nat empty ) ;
+	assert ( 0 = c  (firsts 5 nat) (firsts 5 nat)) ;
+	assert (-1 = c  (firsts 5 nat) (firsts 6 nat)) ;
+	assert ( 1 = c  (firsts 6 nat) (firsts 5 nat)) ;
+	assert (-1 = c  (firsts 5 nat) nat) ;
+	assert ( 1 = c  nat (firsts 5 nat)) ;
+	assert ( 0 = c  s1 s1) ;
+	assert (-1 = c  s1 s2) ;
+	assert ( 1 = c  s2 s1) ;
+	assert (-1 = c  s1 s3) ;
+	assert ( 1 = c  s3 s1) ;
+	assert (-1 = c  s1 s4) ;
+	assert ( 1 = c  s4 s1) ;
+	assert ( 0 = cs (firsts 5 nat) (firsts 5 nat)) ;
+	assert ( 0 = cs (firsts 5 nat) (firsts 6 nat)) ;
+	assert ( 0 = cs (firsts 6 nat) (firsts 5 nat)) ;
+	assert ( 0 = cs s1 s1) ;
+	assert (-1 = cs s1 s2) ;
+	assert ( 1 = cs s2 s1) ;
+	assert ( 0 = cs s1 s3) ;
+	assert ( 0 = cs s3 s1) ;
+	assert (-1 = cs s1 s4) ;
+	assert ( 1 = cs s4 s1) ;
+	assert (to_list (m s1 s2) = [ 1 ; 1 ; 2 ; 2 ; 3 ; 4 ]) ;
+	assert (0 = c s1 (m empty s1)) ;
+	assert (to_list (m s4 s4) = [ 1 ; 1 ; 3 ; 3 ]) ;
+	assert (0 = c (m s3 s3) (stammer 2 s3))
+
 let cat_check () =
 	reset () ;
 	let r1 = firsts 5 nat in
@@ -195,6 +233,7 @@ let () =
 	singleton_check () ;
 	list_check () ;
 	cat_check () ;
+	cmp_check () ;
 	gen_check () ;
 	group_check () ;
 	zip_check () ;

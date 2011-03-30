@@ -29,6 +29,14 @@ sig
 	val fold         : 'a t -> 'b -> ('a -> 'b -> 'b) -> 'b
 	val filter       : 'a t -> ('a -> bool) -> 'a t
 	val mask         : 'a t -> ('a -> bool) -> 'a -> 'a t
+
+	(* Comparison *)
+	val cmp          : ('a -> 'a -> int) -> 'a t -> 'a t -> int
+	val cmp_shortest : ('a -> 'a -> int) -> 'a t -> 'a t -> int
+	(* same as above but stop comparing elements as soon as one of the stream is empty *)
+	val merge        : ('a -> 'a -> int) -> 'a t -> 'a t -> 'a t
+	(* [merge cmp a b] returns the stream composed of elements of a and b interleaved such that
+	 * the cmp fonction yield >= 0 for any two successive elements of the result stream *)
 	
 	(* Generators *)
 	val cycle        : 'a t -> 'a t
@@ -56,6 +64,6 @@ sig
 	(* Utilities *)
 	val (--)         : int -> int -> int t	(* Same as range *)
 	val (//)         : 'a t -> ('a -> bool) -> 'a t (* Same as filter *)
-
+	val (++)         : 'a t -> 'a t -> 'a t (* Same as cat *)
 end
 
