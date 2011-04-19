@@ -22,6 +22,8 @@ sig
 	val nth          : 'a t -> int -> 'a
 	val length       : 'a t -> int
 	val cat          : 'a t -> 'a t -> 'a t
+	val append       : 'a t -> 'a -> 'a t
+	val prepend      : 'a -> 'a t -> 'a t
 	val map          : 'a t -> ('a -> 'b) -> 'b t
 	val map2         : 'a t -> 'b t -> ('a -> 'b -> 'c) -> 'c t
 	val mapi         : 'a t -> (int -> 'a -> 'b) -> 'b t

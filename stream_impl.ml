@@ -67,6 +67,10 @@ struct
 
 	let (++) = cat
 
+	let append t x = t ++ singleton x
+
+	let prepend x t = lazy (Cons (x, t))
+
 	let rec map t f = lazy (match t with
 		| lazy Nil -> Nil
 		| lazy (Cons (x, t')) -> Cons (f x, map t' f)

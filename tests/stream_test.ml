@@ -93,7 +93,9 @@ let cat_check () =
 	assert (length c = 10) ;
 	assert (is_empty (cat empty empty)) ;
 	assert (length (cat (singleton 1) empty) = 1) ;
-	assert (length (cat empty (singleton 1)) = 1)
+	assert (length (cat empty (singleton 1)) = 1) ;
+	assert (head (append empty 1) = 1) ;
+	assert (head (prepend 1 empty) = 1)
 
 let gen_check () =
 	reset () ;
