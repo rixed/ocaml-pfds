@@ -1,3 +1,4 @@
+open Bricabrac
 open Pfds_intf
 module S = Stream_impl.Stream_raw
 open S
@@ -43,6 +44,10 @@ let list_check () =
 	assert (to_list (t // even) = [ 2 ]) ;
 	assert (to_list (3 -- 5) = [ 3 ; 4 ; 5 ])
 
+let nth_check () =
+	let s1 = of_nth ~limit:10 (fun i -> i) in
+	assert (cmp compare s1 (firsts 10 nat) = 0)
+
 let cmp_check () =
 	let s1 = of_list [ 1 ; 2 ; 3 ]
 	and s2 = of_list [ 1 ; 2 ; 4 ]
@@ -82,8 +87,11 @@ let cmp_check () =
 	assert (0 = c (m s3 s3) (stammer 2 s3))
 
 let map_check () =
-	let odds = map_opt nat (fun n -> if n land 1 = 1 then Some n else None) in
-	assert (to_list (firsts 4 odds) = [ 1 ; 3 ; 5 ; 7 ])
+	let none_even n = if n land 1 = 1 then Some n else None in
+	let odds = map_opt nat none_even in
+	assert (to_list (firsts 4 odds) = [ 1 ; 3 ; 5 ; 7 ]) ;
+	let odds'= (nat |> none_even) // ((<>) None) |> unopt in
+	assert (to_list (firsts 4 odds') = [ 1 ; 3 ; 5 ; 7 ])
 
 let cat_check () =
 	reset () ;
@@ -238,6 +246,7 @@ let () =
 	empty_check () ;
 	singleton_check () ;
 	list_check () ;
+	nth_check () ;
 	cmp_check () ;
 	map_check () ;
 	cat_check () ;

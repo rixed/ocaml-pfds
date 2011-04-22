@@ -12,6 +12,7 @@ sig
 	val to_list      : 'a t -> 'a list
 	val of_list      : 'a list -> 'a t
 	val of_succ      : ('a -> 'a) -> 'a -> 'a t
+	val of_nth       : ?limit:int -> (int -> 'a) -> 'a t
 	val nat          : int t
 	val range        : int -> int -> int t
 
@@ -68,5 +69,6 @@ sig
 	val (--)         : int -> int -> int t	(* Same as range *)
 	val (//)         : 'a t -> ('a -> bool) -> 'a t (* Same as filter *)
 	val (++)         : 'a t -> 'a t -> 'a t (* Same as cat *)
+	val (|>)         : 'a t -> ('a -> 'b) -> 'b t (* Same as map *)
 end
 

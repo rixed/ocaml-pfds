@@ -36,6 +36,12 @@ struct
 		| h :: t -> lazy (Cons (h, of_list t))
 
 	let rec of_succ succ first = lazy (Cons (first, of_succ succ (succ first)))
+
+	let rec of_nth ?limit f = match limit with
+		| Some 0 -> empty
+		| Some l -> lazy (Cons (f 0, of_nth ~limit:(l-1) (fun i -> f (i+1)) ))
+		| None   -> lazy (Cons (f 0, of_nth (fun i -> f (i+1))))
+
 	let nat = of_succ succ 0
 
 	(* List like interface *)
@@ -75,6 +81,8 @@ struct
 		| lazy Nil -> Nil
 		| lazy (Cons (x, t')) -> Cons (f x, map t' f)
 	)
+
+	let (|>) = map
 
 	let rec map2 t1 t2 f = lazy (match t1, t2 with
 		| lazy Nil, _ -> Nil
