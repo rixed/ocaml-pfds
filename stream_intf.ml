@@ -10,9 +10,11 @@ sig
 	val singleton    : 'a -> 'a t
 	val to_list_rev  : 'a t -> 'a list
 	val to_list      : 'a t -> 'a list
+	val to_string    : char t -> string
 	val of_list      : 'a list -> 'a t
 	val of_succ      : ('a -> 'a) -> 'a -> 'a t
 	val of_nth       : ?limit:int -> (int -> 'a) -> 'a t
+	val of_string    : string -> char t
 	val nat          : int t
 	val range        : int -> int -> int t
 
@@ -30,6 +32,7 @@ sig
 	val mapi         : 'a t -> (int -> 'a -> 'b) -> 'b t
 	val map_opt      : 'a t -> ('a -> 'b option) -> 'b t
 	val iter         : 'a t -> ('a -> unit) -> unit
+	val iteri        : 'a t -> (int -> 'a -> unit) -> unit
 	val fold         : 'a t -> 'b -> ('a -> 'b -> 'b) -> 'b
 	val filter       : 'a t -> ('a -> bool) -> 'a t
 	val mask         : 'a t -> ('a -> bool) -> 'a -> 'a t

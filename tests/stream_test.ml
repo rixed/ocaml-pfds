@@ -46,7 +46,8 @@ let list_check () =
 
 let nth_check () =
 	let s1 = of_nth ~limit:10 (fun i -> i) in
-	assert (cmp compare s1 (firsts 10 nat) = 0)
+	assert (cmp compare s1 (firsts 10 nat) = 0) ;
+	assert (to_string (of_string "Foo") = "Foo")
 
 let cmp_check () =
 	let s1 = of_list [ 1 ; 2 ; 3 ]

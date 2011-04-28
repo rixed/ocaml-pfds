@@ -42,6 +42,10 @@ struct
 		| Some l -> lazy (Cons (f 0, of_nth ~limit:(l-1) (fun i -> f (i+1)) ))
 		| None   -> lazy (Cons (f 0, of_nth (fun i -> f (i+1))))
 
+	let of_string str =
+		let l = String.length str in
+		of_nth ~limit:l (String.get str)
+
 	let nat = of_succ succ 0
 
 	(* List like interface *)
@@ -102,6 +106,10 @@ struct
 		| lazy Nil -> ()
 		| lazy (Cons (x, t')) -> f x ; iter t' f
 
+	let iteri t f =
+		let i = ref 0 in
+		iter t (fun x -> f !i x ; incr i)
+
 	let rec fold t b f = match t with
 		| lazy Nil -> b
 		| lazy (Cons (x, t')) -> fold t' (f x b) f
@@ -119,6 +127,11 @@ struct
 	let rec mask t f d = match t with
 		| lazy Nil -> empty
 		| lazy (Cons (x, t')) -> lazy (Cons ((if f x then x else d), mask t' f d))
+
+	let to_string t =
+		let str = String.create (length t) in
+		iteri t (String.set str) ;
+		str
 
 	(* Generators *)
 
