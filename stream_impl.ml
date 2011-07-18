@@ -39,7 +39,7 @@ struct
 
 	let rec of_nth ?limit f = match limit with
 		| Some 0 -> empty
-		| Some l -> lazy (Cons (f 0, of_nth ~limit:(l-1) (fun i -> f (i+1)) ))
+		| Some l -> lazy (Cons (f 0, of_nth ~limit:(l-1) (fun i -> f (i+1))))
 		| None   -> lazy (Cons (f 0, of_nth (fun i -> f (i+1))))
 
 	let of_string str =
@@ -49,6 +49,10 @@ struct
 	let of_array arr =
 		let l = Array.length arr in
 		of_nth ~limit:l (Array.get arr)
+
+	(* warning: this won't work most of the time since the entries are consumed *)
+	let rec of_file ic =
+		lazy (try Cons (input_line ic, of_file ic) with End_of_file -> Nil)
 
 	let nat = of_succ succ 0
 

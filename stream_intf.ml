@@ -17,6 +17,7 @@ sig
 	val of_nth       : ?limit:int -> (int -> 'a) -> 'a t
 	val of_string    : string -> char t
 	val of_array     : 'a array -> 'a t
+	val of_file      : in_channel -> string t
 	val nat          : int t
 	val range        : int -> int -> int t
 
