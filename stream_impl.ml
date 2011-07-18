@@ -254,13 +254,15 @@ struct
 		if is_empty t then empty else
 			let h = head t in lazy (Cons (h, aux (f_key h) t))
 
+	(* reservoir-sampling algorithm *)
 	let choose n t = if is_empty t then empty else
 		let chosen = to_array (zip2 (firsts n t) nat) in
 		let rec aux i = function
 			| lazy Nil -> ()
 			| lazy (Cons (x, t')) ->
-				if Random.int i < n then chosen.(Random.int n) <- x, i ;
-				aux (i+1) t' in 
+				let r = Random.int i in
+				if r < n then chosen.(r) <- x, i ;
+				aux (i+1) t' in
 		aux (n+1) (skip n t) ; (* we already kept the first n item *) ;
 		Array.sort (fun (_, i1) (_, i2) -> compare i1 i2) chosen ;
 		of_array (Array.map (fun (x, _) -> x) chosen)
