@@ -46,6 +46,10 @@ struct
 		let l = String.length str in
 		of_nth ~limit:l (String.get str)
 
+	let of_array arr =
+		let l = Array.length arr in
+		of_nth ~limit:l (Array.get arr)
+
 	let nat = of_succ succ 0
 
 	(* List like interface *)
@@ -132,6 +136,16 @@ struct
 		let str = String.create (length t) in
 		iteri t (String.set str) ;
 		str
+
+	let to_array t =
+		let t' = ref t in
+		let init i =
+			(* This assume that Array.init will call this function for consecutive values of i *)
+			ignore i ;
+			let res = head !t' in
+			t' := tail !t' ;
+			res in
+		Array.init (length t) init
 
 	(* Generators *)
 
@@ -235,6 +249,17 @@ struct
 				else lazy (Cons (x, aux k_x t')) in
 		if is_empty t then empty else
 			let h = head t in lazy (Cons (h, aux (f_key h) t))
+
+	let choose n t = if is_empty t then empty else
+		let chosen = to_array (zip2 (firsts n t) nat) in
+		let rec aux i = function
+			| lazy Nil -> ()
+			| lazy (Cons (x, t')) ->
+				if Random.int i < n then chosen.(Random.int n) <- x, i ;
+				aux (i+1) t' in 
+		aux (n+1) (skip n t) ; (* we already kept the first n item *) ;
+		Array.sort (fun (_, i1) (_, i2) -> compare i1 i2) chosen ;
+		of_array (Array.map (fun (x, _) -> x) chosen)
 
 	(* More constructors *)
 	let range start stop =

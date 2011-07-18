@@ -11,10 +11,12 @@ sig
 	val to_list_rev  : 'a t -> 'a list
 	val to_list      : 'a t -> 'a list
 	val to_string    : char t -> string
+	val to_array     : 'a t -> 'a array
 	val of_list      : 'a list -> 'a t
 	val of_succ      : ('a -> 'a) -> 'a -> 'a t
 	val of_nth       : ?limit:int -> (int -> 'a) -> 'a t
 	val of_string    : string -> char t
+	val of_array     : 'a array -> 'a t
 	val nat          : int t
 	val range        : int -> int -> int t
 
@@ -61,6 +63,7 @@ sig
 	val lasts        : int -> 'a t -> 'a t
 	val groupby      : 'a t -> ('a -> 'b) -> ('b * 'a t) t (* group consecutive similar values *)
 	val uniq         : 'a t -> ('a -> 'b) -> 'a t (* filter out consecutive similar values *)
+	val choose       : int -> 'a t -> 'a t (* choose n items randomly *)
 	
 	(* Combinatoric generators *)
 	val zip          : 'a t t -> 'a t t (* {{a,b,..},{c,d,..},{e,f,..}} -> {{a,c,e},{b,d,f},...} *)

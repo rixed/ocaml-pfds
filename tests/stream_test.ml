@@ -44,6 +44,12 @@ let list_check () =
 	assert (to_list (t // even) = [ 2 ]) ;
 	assert (to_list (3 -- 5) = [ 3 ; 4 ; 5 ])
 
+let array_check () =
+	let arr = to_array (firsts 10 nat) in
+	Array.iteri (fun i x -> assert (i = x)) arr ;
+	let nat' = of_array arr in
+	iteri nat' (fun i x -> assert (i = x))
+
 let nth_check () =
 	let s1 = of_nth ~limit:10 (fun i -> i) in
 	assert (cmp compare s1 (firsts 10 nat) = 0) ;
@@ -206,6 +212,27 @@ let uniq_check () =
 	ignore (head (map s'' float_of_int)) ;
 	ignore (zip (of_list [ s ; s' ; s'' ]))
 
+(* Check that the choose is sufficently random *)
+let choose_check () =
+	Random.self_init () ;
+	let t_len = 10 in
+	let t = firsts t_len nat in
+	let nb_choice = ref 0 in
+	let nb_hit = Array.make t_len 0 in
+	let incr_hit x = nb_hit.(x) <- nb_hit.(x)+1 ; incr nb_choice in
+	(* ask fo 1, then 2, then etc up to 10 items, and count how many times each number is chosen *)
+	for run = 0 to 1000 do
+		for size = 0 to t_len do
+			let t' = choose size t in
+			iter t' incr_hit
+		done
+	done ;
+	let _i, sum, sum2 = Array.fold_left (fun (x, s, s2) hits -> x+1, s+x*hits, s2+x*x*hits) (0, 0, 0) nb_hit in
+	let avg = (float_of_int sum)/.(float_of_int !nb_choice) in
+	let sigma = sqrt ((float_of_int sum2)/.(float_of_int !nb_choice) -. avg*.avg) in
+	let sigma_theory = (float_of_int (t_len-1))/.sqrt (12.) in
+	Printf.printf "Average number (from 0 to %d): %f (sigma=%f instead of %f)\n" (t_len-1) avg sigma sigma_theory
+
 (* Now for more realistic examples *)
 
 let fibo_check () =
@@ -247,6 +274,7 @@ let () =
 	empty_check () ;
 	singleton_check () ;
 	list_check () ;
+	array_check () ;
 	nth_check () ;
 	cmp_check () ;
 	map_check () ;
@@ -259,6 +287,7 @@ let () =
 	perm_check () ;
 	comb_check () ;
 	uniq_check () ;
+	choose_check () ;
 	fibo_check () ;
 	root_check ()
 
