@@ -265,7 +265,7 @@ struct
 				aux (i+1) t' in
 		aux (n+1) (skip n t) ; (* we already kept the first n item *) ;
 		Array.sort (fun (_, i1) (_, i2) -> compare i1 i2) chosen ;
-		of_array (Array.map (fun (x, _) -> x) chosen)
+		of_array (Array.map fst chosen)
 
 	(* More constructors *)
 	let range start stop =
