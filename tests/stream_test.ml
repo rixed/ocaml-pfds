@@ -19,7 +19,9 @@ let singleton_check () =
     let check x =
         let s = singleton x in
         assert (not (is_empty s)) ;
-        assert (length s = 1) in
+        assert (length s = 1) ;
+        assert (mem s x) ;
+        assert (is_singleton s) in
     check 1 ;
     check empty
 
@@ -42,7 +44,9 @@ let list_check () =
     assert (fold t 0 (+) = 6) ;
     let even x = x land 1 = 0 in
     assert (to_list (t // even) = [ 2 ]) ;
-    assert (to_list (3 -- 5) = [ 3 ; 4 ; 5 ])
+    assert (to_list (3 -- 5) = [ 3 ; 4 ; 5 ]) ;
+    assert (exists nat ((<=) 10)) ;
+    assert (mem nat 5)
 
 let array_check () =
     let arr = to_array (firsts 10 nat) in
@@ -285,6 +289,43 @@ let root_check () =
                   { f = (fun x -> sin x)        ; start = 1.  ; root = 0. } ] in
     List.iter check_f tests
 
+let puzzle_check () =
+    let numbers = 2 -- 99 in
+    let all = (product (repeat ~count:2 numbers) |> (fun s -> nth s 0, nth s 1)) // (fun (a, b) -> a >= b) in
+    let factors  p t = (* returns the factors of p that are in t *)
+        t // (fun (a, b) -> a*b = p)
+    and summands s t = (* returns the summands of p that are in t *)
+        t // (fun (a, b) -> a+b = s)
+    and print_stream oc t =
+        let maxlen = 8 in
+        let l = to_list (firsts maxlen t) in
+        let rec aux = function [] -> () | (a, b) :: l' -> Printf.fprintf oc "(%d,%d), " a b ; aux l' in
+        Printf.fprintf oc "[ " ; aux l ; Printf.fprintf oc "%s ]" (if length t > maxlen then " ..." else "") in
+    let print_rem t =
+        Printf.printf "\t%d possibilities (%a)\n%!" (length t) print_stream t
+    in
+    Printf.printf "Let's a and b be two numbers between 2 to 99, with a >= b.\n" ;
+    print_rem all ;
+    Printf.printf "But Mr. P is told the product while Mr. S is told the sum.\n%!" ;
+    Printf.printf "Mr. P: \"I do not know the numbers.\"\n%!" ; (* ie. there are more than one factorization *)
+    let rem = all // (fun (a, b) -> not (is_singleton (factors (a*b) all))) in
+    print_rem rem ;
+    Printf.printf "Mr. S: \"I knew you do not know.\"\n%!" ; (* amongst all the summands of S, none have only one factorization *)
+    let rem = rem (* we take only s1 to avoid having to perform the intersection afterward *) // (fun (a, b) ->
+        let summands = summands (a+b) all in
+        not (exists summands (fun (a, b) -> is_singleton (factors (a*b) all)))) in
+    print_rem rem ;
+    Printf.printf "Mr. S: \"I do not know the numbers either.\"\n%!" ; (* Still, there are many ways to got S *)
+    let rem = rem // (fun (a, b) -> not (is_singleton (summands (a+b) rem))) in
+    print_rem rem ;
+    Printf.printf "Mr. P: \"I know the numbers!\"\n%!" ; (* there is now only one way to factorize P *)
+    let rem = rem // (fun (a, b) -> is_singleton (factors (a*b) rem)) in
+    print_rem rem ;
+    Printf.printf "Mr. S: \"I know the numbers too!\"\n%!" ; (* there is now only one way to obtain S *)
+    let rem = rem // (fun (a, b) -> is_singleton (summands (a+b) rem)) in
+    print_rem rem ;
+    assert (to_list rem = [ 13, 4 ]) (* so P was 52 and S was 17 *)
+
 let () =
     empty_check () ;
     singleton_check () ;
@@ -304,5 +345,6 @@ let () =
     uniq_check () ;
     choose_check () ;
     fibo_check () ;
-    root_check ()
+    root_check () ;
+    puzzle_check ()
 

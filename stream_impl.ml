@@ -19,6 +19,10 @@ struct
 		| lazy Nil -> true
 		| _ -> false
 
+	let is_singleton = function
+		| lazy (Cons (_, lazy Nil)) -> true
+		| _ -> false
+
 	(* Convertion / Creation *)
 
 	let singleton x = lazy (Cons (x, empty))
@@ -135,6 +139,12 @@ struct
 	let rec mask t f d = match t with
 		| lazy Nil -> empty
 		| lazy (Cons (x, t')) -> lazy (Cons ((if f x then x else d), mask t' f d))
+
+	let rec exists t f = match t with
+		| lazy Nil -> false
+		| lazy (Cons (x, t')) -> f x || exists t' f
+
+	let rec mem t x = exists t ((=) x)
 
 	let to_string t =
 		let str = String.create (length t) in

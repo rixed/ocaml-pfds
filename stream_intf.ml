@@ -5,6 +5,7 @@ sig
 
 	val empty        : 'a t
 	val is_empty     : 'a t -> bool
+	val is_singleton : 'a t -> bool
 
 	(* Convertion / Creation *)
 	val singleton    : 'a -> 'a t
@@ -39,6 +40,8 @@ sig
 	val fold         : 'a t -> 'b -> ('a -> 'b -> 'b) -> 'b
 	val filter       : 'a t -> ('a -> bool) -> 'a t
 	val mask         : 'a t -> ('a -> bool) -> 'a -> 'a t
+	val exists       : 'a t -> ('a -> bool) -> bool
+	val mem          : 'a t -> 'a -> bool
 
 	(* Comparison *)
 	val cmp          : ('a -> 'a -> int) -> 'a t -> 'a t -> int
@@ -76,6 +79,6 @@ sig
 	val (--)         : int -> int -> int t	(* Same as range *)
 	val (//)         : 'a t -> ('a -> bool) -> 'a t (* Same as filter *)
 	val (++)         : 'a t -> 'a t -> 'a t (* Same as cat *)
-	val (|>)         : 'a t -> ('a -> 'b) -> 'b t (* Same as map *)
+	val (|>)         : 'a t -> ('a -> 'b) -> 'b t (* Same as map *) (* FIXME *)
 end
 
