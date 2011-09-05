@@ -315,9 +315,6 @@ let puzzle_check () =
         let summands = summands (a+b) all in
         not (exists summands (fun (a, b) -> is_singleton (factors (a*b) all)))) in
     print_rem rem ;
-    Printf.printf "Mr. S: \"I do not know the numbers either.\"\n%!" ; (* Still, there are many ways to got S *)
-    let rem = rem // (fun (a, b) -> not (is_singleton (summands (a+b) rem))) in
-    print_rem rem ;
     Printf.printf "Mr. P: \"I know the numbers!\"\n%!" ; (* there is now only one way to factorize P *)
     let rem = rem // (fun (a, b) -> is_singleton (factors (a*b) rem)) in
     print_rem rem ;
