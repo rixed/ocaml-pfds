@@ -68,7 +68,9 @@ end
 module type SET_OPS =
 sig
 	type t
+	type e
 	val merge : t -> t -> t
+	val filter : t -> (e -> bool) -> t
 end
 
 module type SET_BASE =
@@ -79,13 +81,12 @@ sig
 	val member : t -> e -> bool
 	val delete : t -> e -> t
 	(** [delete t x] deletes one value that compare equal with x from t *)
-	(* TODO : ITERABLE+delete -> filter... *)
 end
 
 module type SET =
 sig
 	include SET_BASE
-	include SET_OPS with type t := t
+	include SET_OPS with type t := t and type e := e
 end
 
 module type SET_GEN =
