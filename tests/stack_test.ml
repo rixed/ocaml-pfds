@@ -15,14 +15,7 @@ struct
 		with Empty -> () ;
 		try
 			ignore (tail empty) ; assert false
-		with Empty -> ()
-end
-
-module Stack_ops_test (Stack_ops : STACK_OPS) =
-struct
-	open Stack_ops
-	open Stack
-	let () =
+		with Empty -> () ;
 		let s = cons 1 (cons 2 (cons 3 empty)) in
 		let suff_s =
 			cons s
@@ -32,6 +25,5 @@ struct
 		assert (suffixes s = suff_s)
 end
 
-module Stack_test1 = Stack_test (Stack_impl.Stack_raw)
-module Stack_test2 = Stack_ops_test (Stack_ops_impl.Stack_ops_raw(Stack_impl.Stack_raw))
+module Stack_test1 = Stack_test (Stack_impl.Stack)
 

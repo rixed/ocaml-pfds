@@ -1,9 +1,8 @@
 open Pfds_intf
 
-module Stack_ops_raw (Stack_: STACK) =
+module Make (Stack : STACK_BASE) =
 struct
-	module Stack = Stack_
-	open Stack
+	include Stack
 	exception Out_of_bound
 
 	let rec suffixes stack =
@@ -20,5 +19,3 @@ struct
 		else cons (head stack) (update (tail stack) (idx-1) v)
 end
 
-module Stack_ops (Stack_: STACK)
-	: STACK_OPS with module Stack = Stack_ = Stack_ops_raw (Stack_)

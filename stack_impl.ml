@@ -1,6 +1,6 @@
 open Pfds_intf
 
-module Stack_raw =
+module Stack_base =
 struct
 	type 'a t = Nil | Cons of ('a * 'a t)
 
@@ -57,6 +57,7 @@ struct
 	let tail = function
 		| Nil -> raise Empty
 		| Cons (_, t') -> t'
+
 end
 
-module Stack : STACK = Stack_raw
+module Stack : STACK = Stack_ops_impl.Make (Stack_base)

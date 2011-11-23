@@ -79,10 +79,10 @@ struct
 			iter f l ;
 			f x ;
 			iter f r
-	
+
 	include Iterable_impl.Iterable_from_iter (struct type t' = t type e' = e let iter = iter end)
 end
 
 module Unbalanced_set (Ord : ORDERED) :
-	SET with type e = Ord.t = Unbalanced_set_raw (Ord)
+	SET with type e = Ord.t = Set_ops_impl.Make (Unbalanced_set_raw (Ord))
 

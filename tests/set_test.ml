@@ -52,5 +52,5 @@ struct
 		test_delete ()
 end
 
-module Set_test1 = Set_test (Btree_impl.Unbalanced_set_raw (String))
-module Set_test2 = Set_test (Red_black_tree_impl.Red_black_tree_raw (String))
+module Set_test1 = Set_test (Btree_impl.Unbalanced_set (String))
+module Set_test2 = Set_test (Red_black_tree_impl.Red_black_tree (String))

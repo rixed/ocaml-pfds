@@ -14,6 +14,8 @@ sig
 	val iteri      : (int -> e -> unit) -> t -> unit
 	val fold_left  : ('a -> e -> 'a) -> 'a -> t -> 'a
 	val fold_right : (e -> 'a -> 'a) -> t -> 'a -> 'a	(* FIXME: must iterate from right to left! *)
+	val find_first : (e -> bool) -> t -> e (* may raise Not_found *)
+	val exists     : (e -> bool) -> t -> bool
 end
 
 module type ITERABLE_GEN =
@@ -32,7 +34,15 @@ sig
 	val fold_right : ('a -> 'b -> 'b) -> 'a t -> 'b -> 'b
 end
 
-module type STACK =
+module type STACK_OPS =
+sig
+	type 'a t
+	val suffixes : 'a t -> 'a t t
+	val append   : 'a t -> 'a t -> 'a t
+	val update   : 'a t -> int -> 'a -> 'a t
+end
+
+module type STACK_BASE =
 sig
 	include ITERABLE_GEN
 
@@ -41,12 +51,12 @@ sig
 	val tail     : 'a t -> 'a t (* raises Empty if the stack is empty *)
 end
 
-module type STACK_OPS =
+(* Instead of letting the user build his own Stack_ops, we'd rather include it directly in the Stack module
+   so that some stack implementations can overwrite functions of STACK_OPS *)
+module type STACK =
 sig
-	module Stack : STACK
-	val suffixes : 'a Stack.t -> 'a Stack.t Stack.t
-	val append   : 'a Stack.t -> 'a Stack.t -> 'a Stack.t
-	val update   : 'a Stack.t -> int -> 'a -> 'a Stack.t
+	include STACK_BASE
+	include STACK_OPS with type 'a t := 'a t
 end
 
 module type ORDERED =
@@ -55,7 +65,13 @@ sig
 	val compare : t -> t -> int
 end
 
-module type SET =
+module type SET_OPS =
+sig
+	type t
+	val merge : t -> t -> t
+end
+
+module type SET_BASE =
 sig
 	include ITERABLE
 
@@ -64,7 +80,12 @@ sig
 	val delete : t -> e -> t
 	(** [delete t x] deletes one value that compare equal with x from t *)
 	(* TODO : ITERABLE+delete -> filter... *)
-	(* TODO : delete... *)
+end
+
+module type SET =
+sig
+	include SET_BASE
+	include SET_OPS with type t := t
 end
 
 module type SET_GEN =

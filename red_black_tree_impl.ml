@@ -77,4 +77,4 @@ struct
 end
 
 module Red_black_tree (Ord : ORDERED) :
-	SET with type e = Ord.t = Red_black_tree_raw (Ord)
+	SET with type e = Ord.t = Set_ops_impl.Make (Red_black_tree_raw (Ord))
