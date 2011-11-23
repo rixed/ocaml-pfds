@@ -64,6 +64,8 @@ struct
 		check_invariants t' ;
 		t'
 	
+	let delete t x = t (* TODO *)
+
 	let rec iter f = function
 		| E -> ()
 		| T (_, l, x, r) ->

@@ -61,6 +61,9 @@ sig
 
 	val insert : t -> e -> t
 	val member : t -> e -> bool
+	val delete : t -> e -> t
+	(** [delete t x] deletes one value that compare equal with x from t *)
+	(* TODO : ITERABLE+delete -> filter... *)
 	(* TODO : delete... *)
 end
 

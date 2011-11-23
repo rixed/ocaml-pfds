@@ -16,15 +16,11 @@ struct
 			if n <= 0 then s
 			else let str = string_of_int n in
 				add_one (insert s str) (n-1) in
-		let count s =
-			let c = ref 0 in
-			iter (fun _ -> incr c) s ;
-			!c in
 		let nb = 10 in
 		let set = add_one empty nb in
-		assert (count set = nb) ;
+		assert (length set = nb) ;
 		let set = insert s "one" in
-		assert (count set = 1)
+		assert (length set = 1)
 
 	let test_member () =
 		assert (member s "one") ;
@@ -32,10 +28,28 @@ struct
 		assert (member ss' "one") ;
 		assert (member ss' "two")
 
+	let test_delete () =
+		assert (is_empty (delete s "one")) ;
+		try ignore (delete s "pas glop") ; assert false
+		with Not_found -> () ;
+		let set = List.fold_left insert empty
+			[ "capricorn" ; "aquarius" ; "pisces" ;
+			  "aries" ; "taurus" ; "gemini" ; "cancer" ;
+			  "leo" ; "virgo" ; "libra" ; "scorpio" ] in
+		assert (length set = 11) ;
+		let t str =
+			let set' = delete set str in
+			assert (length set' = 10) ;
+			assert (not (member set' str)) in
+		t "aquarius" ;
+		t "cancer" ;
+		t "capricorn"
+
 	let () =
 		test_emptiness () ;
 		test_insert () ;
-		test_member ()
+		test_member () ;
+		test_delete ()
 end
 
 module Set_test1 = Set_test (Btree_impl.Unbalanced_set_raw (String))

@@ -30,6 +30,35 @@ struct
 				if cmp < 0 then aux last l
 				else aux (Some y) r in
 		aux None set
+
+	let delete set x =
+		(* return the min and the tree without the min *)
+		let rec del_min = function
+			| E -> failwith "Should not happen"
+			| T (E, y, r) -> y, r
+			| T (l, y, r) ->
+				let m, l' = del_min l in
+				m, T (l', y, r) in
+		(* delete the root of the given tree *)
+		let del_root = function
+			| E -> failwith "Should not happen"
+			| T (l, _, E) -> l
+			| T (E, _, r) -> r
+			| T (l, _, r) ->
+			(* TODO: alternatively, instead of replacing the root with its successor
+			   replace it by its predecessor (mirroring del_min).
+			   See Knuth TAOCPv3, p435, to know why *)
+				let m, r' = del_min r in
+				T (l, m, r') in
+		(* locate the node to be deleted then delete it *)
+		let rec find_del = function
+			| E -> raise Not_found
+			| T (l, y, r) as n ->
+				let cmp = Ord.compare x y in
+				if cmp < 0 then T (find_del l, y, r)
+				else if cmp > 0 then T (l, y, find_del r)
+				else del_root n in
+		find_del set
 	
 	let rec complete x depth =
 		if depth = 0 then E
