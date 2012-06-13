@@ -184,8 +184,10 @@ module type SORTLIST_GEN =
 sig
 	include ITERABLE_GEN
 
-	val insert : 'a t -> 'a -> 'a t
-	val remove : 'a t -> 'a -> 'a t
+	val insert : ('a -> 'a -> bool) -> 'a t -> 'a -> 'a t (* comp function is less-than *)
+    (* Remove the first entry for which the given function returns true.
+     * Will do nothing of the entry can't be found. *)
+	val remove : ('a -> bool) -> 'a t -> 'a t
 end
 
 module type ROPE_GEN =
