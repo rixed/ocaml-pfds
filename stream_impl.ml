@@ -98,7 +98,7 @@ struct
 		| lazy (Cons (x, t')) -> Cons (f x, map t' f)
 	)
 
-	let (|>) = map
+	let (/@) = map
 
 	let rec map2 t1 t2 f = lazy (match t1, t2 with
 		| lazy Nil, _ -> Nil

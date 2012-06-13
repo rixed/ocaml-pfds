@@ -79,6 +79,6 @@ sig
 	val (--)         : int -> int -> int t	(* Same as range *)
 	val (//)         : 'a t -> ('a -> bool) -> 'a t (* Same as filter *)
 	val (++)         : 'a t -> 'a t -> 'a t (* Same as cat *)
-	val (|>)         : 'a t -> ('a -> 'b) -> 'b t (* Same as map *) (* FIXME *)
+	val (/@)         : 'a t -> ('a -> 'b) -> 'b t (* Same as map *)
 end
 
