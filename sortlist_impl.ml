@@ -62,8 +62,8 @@ struct
             | b::bef, aft, n -> if lt b x then t else rwd (bef, b::aft, n) in
         (* function to advance as much as necessary *)
         let rec fwd t = match t with
-            | _, [], _       -> t
-            | bef, a::aft, n -> if lt x a then t else fwd (a::bef, aft, n) in
+            | bef, [], n     -> bef, [x], n+1
+            | bef, a::aft, n -> if lt x a then bef, x::a::aft, n+1 else fwd (a::bef, aft, n) in
         fwd (rwd t)
 
     let remove f ((bef, aft, n) as t) =
