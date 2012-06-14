@@ -9,7 +9,8 @@ PROGRAMS = \
 	dequeue_test.byte \
 	ring_test.byte \
 	rope_test.byte \
-	insertion_bench.byte
+	insertion_bench.byte \
+	sortlist_test.byte
 
 include ../make.common
 

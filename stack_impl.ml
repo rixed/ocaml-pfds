@@ -2,7 +2,16 @@ open Pfds_intf
 
 module Stack_base =
 struct
-	type 'a t = Nil | Cons of ('a * 'a t)
+    type 'a t = Nil | Cons of ('a * 'a t)
+
+   	let rec iter f t = match t with
+		| Nil -> ()
+		| Cons (x, t') -> f x ; iter f t'
+
+    include Iterable_impl.Of_gen (struct
+        type 'a t' = 'a t
+        let iter = iter
+    end)
 
 	let empty = Nil
 	
@@ -17,11 +26,7 @@ struct
 			| Nil -> n
 			| Cons (_, t') -> aux (n+1) t' in
 		aux 0 t
-	
-	let rec iter f t = match t with
-		| Nil -> ()
-		| Cons (x, t') -> f x ; iter f t'
-	
+
 	let iteri f t =
 		let c = ref 0 in
 		iter (fun x -> f !c x ; incr c) t
@@ -57,6 +62,11 @@ struct
 	let tail = function
 		| Nil -> raise Empty
 		| Cons (_, t') -> t'
+
+
+    let rec to_list = function
+        | Nil -> []
+        | Cons (x, t') -> x :: to_list t'
 
 end
 

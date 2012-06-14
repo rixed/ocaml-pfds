@@ -4,10 +4,7 @@ module Rope_test (Rope : ROPE_GEN) =
 struct
 	open Rope
 
-	(* TODO: test the iterable part separately *)
 	let () =
-		assert (is_empty empty = true) ;
-		assert (length empty = 0) ;
 		assert (is_empty (cat empty empty)) ;
 		(* convertions preserve emptiness *)
 		assert (to_string empty = "") ;
@@ -55,5 +52,5 @@ struct
 		assert (Rope.to_string r = "foar")
 end
 
+module Iterable_test1 = Iterable_test.Of_gen (Rope_impl.Make_raw)
 module Rope_test1 = Rope_test (Rope_impl.Make_raw)
-

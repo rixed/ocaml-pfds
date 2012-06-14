@@ -101,7 +101,7 @@ let map_check () =
     let none_even n = if n land 1 = 1 then Some n else None in
     let odds = map_opt nat none_even in
     assert (to_list (firsts 4 odds) = [ 1 ; 3 ; 5 ; 7 ]) ;
-    let odds'= (nat |> none_even) // ((<>) None) |> unopt in
+    let odds'= nat /@ none_even // ((<>) None) /@ unopt in
     assert (to_list (firsts 4 odds') = [ 1 ; 3 ; 5 ; 7 ])
 
 let cat_check () =
@@ -291,7 +291,7 @@ let root_check () =
 
 let puzzle_check () =
     let numbers = 2 -- 99 in
-    let all = (product (repeat ~count:2 numbers) |> (fun s -> nth s 0, nth s 1)) // (fun (a, b) -> a >= b) in
+    let all = (product (repeat ~count:2 numbers) /@ (fun s -> nth s 0, nth s 1)) // (fun (a, b) -> a >= b) in
     let factors  p t = (* returns the factors of p that are in t *)
         t // (fun (a, b) -> a*b = p)
     and summands s t = (* returns the summands of p that are in t *)

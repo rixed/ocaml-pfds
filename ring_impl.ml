@@ -40,7 +40,7 @@ struct
 		| _ :: prevs, [], size -> rewind (prevs, [], size-1)
 		| _ -> raise Not_found
 
-	let iterr f t =
+   	let iterr f t =
 		let rec aux l s =
 			if s > 0 then (f l ; aux (next l) (s-1)) in
 		aux t (length t)
@@ -50,6 +50,11 @@ struct
 			if s > 0 then (f i l ; aux (next l) (s-1) (i+1)) in
 		aux t (length t) 0
 	let iteri f t = iterir (fun i l -> f i (get l)) t
+
+    include Iterable_impl.Of_gen (struct
+        type 'a t' = 'a t
+        let iter = iter
+    end)
 
 	let map f (l1, l2, s) =
 		let l2' = List.map f l2 in	(* we want to map l2 first *)
@@ -72,6 +77,7 @@ struct
 			if s > 0 then aux (next t') (f t' b') (s-1) else b' in
 		aux t b (length t)
 	let fold_right f t b = fold_rightr (fun t b -> f (get t) b) t b
+
 end
 
 module Ring : RING_GEN = Ring_raw

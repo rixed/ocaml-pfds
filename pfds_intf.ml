@@ -16,11 +16,18 @@ sig
 	val fold_right : (e -> 'a -> 'a) -> t -> 'a -> 'a	(* FIXME: must iterate from right to left! *)
 	val find_first : (e -> bool) -> t -> e (* may raise Not_found *)
 	val exists     : (e -> bool) -> t -> bool
+
+    (* Converters *)
+
+	val to_list   : t -> e list
+	val to_array  : t -> e array
 end
 
 module type ITERABLE_GEN =
 sig
 	type 'a t
+
+    (* TODO: Move here index/rindex... *)
 
 	val empty      : 'a t
 	val is_empty   : 'a t -> bool
@@ -32,6 +39,13 @@ sig
 	val mapi       : (int -> 'a -> 'b) -> 'a t -> 'b t
 	val fold_left  : ('b -> 'a -> 'b) -> 'b -> 'a t -> 'b
 	val fold_right : ('a -> 'b -> 'b) -> 'a t -> 'b -> 'b
+
+    (* Converter to various sources *)
+
+	val to_list   : 'a t -> 'a list
+	val to_array  : 'a t -> 'a array
+	val to_string : char t -> string
+	val to_file   : string -> char t -> unit
 end
 
 module type STACK_OPS =
@@ -194,16 +208,6 @@ module type ROPE_GEN =
 sig
 	include ITERABLE_GEN
 
-	val of_list   : 'a list -> 'a t
-	val of_array  : 'a array -> 'a t
-	val of_string : string -> char t
-	val of_func   : int -> (int -> 'a) -> 'a t
-	val of_file   : string -> char t
-	val to_list   : 'a t -> 'a list
-	val to_array  : 'a t -> 'a array
-	val to_string : char t -> string
-	val to_file   : string -> char t -> unit
-
 	val cat       : 'a t -> 'a t -> 'a t
 	val cut       : 'a t -> int -> int -> 'a t
 	val insert    : 'a t -> int -> 'a t -> 'a t
@@ -212,5 +216,11 @@ sig
 	val count     : 'a t -> 'a -> int
 	val index     : 'a t -> 'a -> int
 	val rindex    : 'a t -> 'a -> int
+
+	val of_list   : 'a list -> 'a t
+	val of_array  : 'a array -> 'a t
+	val of_string : string -> char t
+	val of_func   : int -> (int -> 'a) -> 'a t
+	val of_file   : string -> char t
 end
 

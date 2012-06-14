@@ -1,3 +1,4 @@
+# vim:syntax=make
 OCAMLC   = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlc -thread
 OCAMLOPT = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlopt -thread
 OCAMLDEP = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamldep

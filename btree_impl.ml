@@ -80,7 +80,7 @@ struct
 			f x ;
 			iter f r
 
-	include Iterable_impl.Iterable_from_iter (struct type t' = t type e' = e let iter = iter end)
+	include Iterable_impl.Of (struct type t' = t type e' = e let iter = iter end)
 end
 
 module Unbalanced_set (Ord : ORDERED) :

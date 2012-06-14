@@ -1,13 +1,23 @@
 open Pfds_intf
 open Bricabrac
 
-module Make_raw =
+module Raw =
 struct
     (** the list of items before the cursor, and those after, then length *)
     type 'a t = 'a list * 'a list * int
 
+    let rec iter f = function
+        | [], [], _n     -> ()
+        | x::bef, aft, n -> iter f (bef, x::aft, n)
+        | [], x::aft, n  -> f x ; iter f ([], aft, n) (* notice we do not take care of n *)
+
+    include Iterable_impl.Of_gen (struct
+        type 'a t' = 'a t
+        let iter = iter
+    end)
+
    	let empty = [], [], 0
-	
+
     let is_empty = function
         | [], [], 0 -> true
         | _, _, n -> assert(n > 0) ; false
@@ -15,11 +25,6 @@ struct
 	let singleton x = [], [x], 1
 
 	let length (_,_,n) = n
-	
-    let rec iter f = function
-        | [], [], _n     -> ()
-        | x::bef, aft, n -> iter f (bef, x::aft, n)
-        | [], x::aft, n  -> f x ; iter f ([], aft, n) (* notice we do not take care of n *)
 
 	let rec fold_left f c = function
         | [], [], _      -> c
@@ -32,7 +37,8 @@ struct
         | x::bef, [], n  -> fold_right f (bef, [], n) (f x c) (* idem *)
 
     let iteri f t =
-        fold_left (fun c x -> f c x ; c+1) 0 t
+        fold_left (fun c x -> f c x ; c+1) 0 t |>
+        ignore
 
     (* notice that f is not called in list order, and that the resulting list may not be sorted! *)
     let map f (bef, aft, n) =
@@ -40,7 +46,9 @@ struct
 	
     (* f is not called in increasing index order! *)
     let mapi f (bef, aft, n) =
-        let list_mapi f l = List.fold_left (fun c x -> f c x ; c+1) 0 l in
+        let list_mapi f l =
+            List.fold_left (fun (c,p) x -> c+1, f c x :: p) (0, []) l |>
+            snd in
         let bef_len = List.length bef in
         list_mapi (fun i x -> f (bef_len - 1 - i) x) bef,
         list_mapi (fun i x -> f (bef_len + i) x) aft,
@@ -70,3 +78,5 @@ struct
         t
 
 end
+
+module Gen : SORTLIST_GEN = Raw
