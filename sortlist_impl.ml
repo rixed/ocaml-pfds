@@ -16,22 +16,22 @@ struct
         let iter = iter
     end)
 
-   	let empty = [], [], 0
+    let empty = [], [], 0
 
     let is_empty = function
         | [], [], 0 -> true
         | _, _, n -> assert(n > 0) ; false
 
-	let singleton x = [], [x], 1
+    let singleton x = [], [x], 1
 
-	let length (_,_,n) = n
+    let length (_,_,n) = n
 
-	let rec fold_left f c = function
+    let rec fold_left f c = function
         | [], [], _      -> c
         | x::bef, aft, n -> fold_left f c (bef, x::aft, n)
         | [], x::aft, n  -> fold_left f (f c x) ([], aft, n) (* again we do not update n *)
 
-	let rec fold_right f t c = match t with
+    let rec fold_right f t c = match t with
         | [], [], _      -> c
         | bef, x::aft, n -> fold_right f (x::bef, aft, n) c
         | x::bef, [], n  -> fold_right f (bef, [], n) (f x c) (* idem *)
@@ -43,7 +43,7 @@ struct
     (* notice that f is not called in list order, and that the resulting list may not be sorted! *)
     let map f (bef, aft, n) =
         List.map f bef, List.map f aft, n
-	
+
     (* f is not called in increasing index order! *)
     let mapi f (bef, aft, n) =
         let list_mapi f l =
@@ -66,7 +66,7 @@ struct
             | bef, a::aft, n -> if lt x a then t else fwd (a::bef, aft, n) in
         fwd (rwd t)
 
-	let remove f ((bef, aft, n) as t) =
+    let remove f ((bef, aft, n) as t) =
         let rec aux p = function
             | []    -> false, [], p
             | x::x' -> if f x then true, x', p

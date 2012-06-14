@@ -7,7 +7,7 @@ struct
     (* Not much for now since we can't create content (until from_list and friends join us... *)
     let () =
         assert (is_empty empty = true) ;
-		assert (length empty = 0) ;
+        assert (length empty = 0) ;
 end
 
 module Of_gen (Iter : ITERABLE_GEN) =
@@ -17,5 +17,5 @@ struct
     (* Not much for now since we can't create content (until from_list and friends join us... *)
     let () =
         assert (is_empty empty = true) ;
-		assert (length empty = 0) ;
+        assert (length empty = 0) ;
 end

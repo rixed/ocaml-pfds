@@ -8,7 +8,10 @@ override OCAMLFLAGS    += $(INCS) -w Ael -g -rectypes
 
 all:
 
-.PHONY: all opt clean clean-spec install uninstall reinstall doc
+.PHONY: all opt clean clean-spec install uninstall reinstall doc clear
+
+clear: $(wildcard *.ml) $(wildcard *.mli)
+	sed -i -e 's/[ 	]\+$$//' $^
 
 ifdef PKG_NAME
 OBJECTS  = $(SOURCES:.ml=.cmo)
