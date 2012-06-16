@@ -1,7 +1,6 @@
 open Bricabrac
 open Pfds_intf
-module S = Stream_impl.Stream_raw
-open S
+open LStream
 
 (* We want to check how many values are forced *)
 let count = ref 0 (* This counter is global for all users of this module *)
@@ -155,7 +154,7 @@ let altern_check () =
     let t1 = firsts 3 nat in
     let t2 = of_list [ 6 ; 7 ] in
     let a = altern2 t1 t2 in
-    assert (S.to_list a = [ 0 ; 6 ; 1 ; 7 ; 2 ])
+    assert (to_list a = [ 0 ; 6 ; 1 ; 7 ; 2 ])
 
 let check_fail f p =
     try (f p ; assert false)
@@ -205,6 +204,9 @@ let comb_check () =
     check empty 0 [] ;
     check_fail (combinations 1) empty ;
     check_fail (combinations 6) t
+
+let flatten_check () =
+    assert (firsts 4 nat +@+ (fun n -> firsts n nat) |> to_list = [ 0; 0;1; 0;1;2 ])
 
 (* Check that in some interresting situations items are computed only once *)
 let uniq_check () =
@@ -339,6 +341,7 @@ let () =
     prod_check () ;
     perm_check () ;
     comb_check () ;
+    flatten_check () ;
     uniq_check () ;
     choose_check () ;
     fibo_check () ;
