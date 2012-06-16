@@ -14,8 +14,8 @@ REQUIRES = bricabrac
 
 include make.common
 
-all: $(ARCHIVE)
-
+all: byte opt
+byte: $(ARCHIVE)
 opt: $(XARCHIVE)
 
 check: $(ARCHIVE) $(XARCHIVE)
