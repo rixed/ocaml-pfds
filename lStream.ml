@@ -201,7 +201,7 @@ let rec dropwhile f t = match t with
     | lazy Nil as nil -> nil
     | lazy (Cons (x, t')) -> if f x then dropwhile f t' else t
 
-let rec takewhile f t = match t with
+let rec takewhile f = function
     | lazy Nil as nil -> nil
     | lazy (Cons (x, t')) -> if f x then lazy (Cons (x, takewhile f t')) else empty
 

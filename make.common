@@ -6,9 +6,7 @@ OCAMLDOC = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamldoc -rectypes -keep-code -h
 override OCAMLOPTFLAGS += $(INCS) -w Ael -g -rectypes
 override OCAMLFLAGS    += $(INCS) -w Ael -g -rectypes
 
-all:
-
-.PHONY: all opt clean clean-spec install uninstall reinstall doc clear
+.PHONY: opt clean clean-spec install uninstall reinstall doc clear
 
 clear: $(wildcard *.ml) $(wildcard *.mli)
 	sed -i -e 's/[ 	]\+$$//' $^

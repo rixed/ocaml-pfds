@@ -12,9 +12,11 @@ SOURCES  = \
 
 REQUIRES = bricabrac
 
+.PHONY: all
+all: byte opt
+
 include make.common
 
-all: byte opt
 byte: $(ARCHIVE)
 opt: $(XARCHIVE)
 
