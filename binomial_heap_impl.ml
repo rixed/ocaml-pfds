@@ -59,6 +59,7 @@ struct
             | [] -> prev
             | t :: ts -> makeH ((r-1, t) :: prev) ts in
         merge (makeH [] ts1) ts2
+
 end
 
 module Binomial_heap (Ord : ORDERED) :

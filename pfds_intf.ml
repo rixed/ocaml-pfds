@@ -136,6 +136,7 @@ sig
     val merge      : t -> t -> t
     val min        : t -> e (* raises Empty if t is empty *)
     val delete_min : t -> t (* raises Empty if t is empty *)
+    (*val member     : t -> e -> bool*)
 end
 
 module type HEAP_OPS =
