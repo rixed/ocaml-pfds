@@ -61,6 +61,25 @@ struct
             let s' = fold_right f r s in
             fold_right f l s'
 
+    let rec find_first f = function
+        | Cat (_, l, r) ->
+            (try find_first f l with Not_found -> find_first f r)
+        | Leaf (n, o, get) ->
+            let rec aux i =
+                if i >= n then raise Not_found else
+                let x = get (o+i) in
+                if f x then x else aux (i+1) in
+            aux 0
+
+    let rec exists f = function
+        | Cat (_, l, r) ->
+            (try exists f l with Not_found -> exists f r)
+        | Leaf (n, o, get) ->
+            let rec aux i =
+                if i >= n then false else
+                if f (get (o+i)) then true else aux (i+1) in
+            aux 0
+
     (* ROPE_GEN *)
 
     let cat l r =

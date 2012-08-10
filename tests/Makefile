@@ -10,7 +10,8 @@ PROGRAMS = \
 	ring_test.byte \
 	rope_test.byte \
 	insertion_bench.byte \
-	sortlist_test.byte
+	sortlist_test.byte \
+	finite_map_test.byte
 
 include ../make.common
 

@@ -64,7 +64,83 @@ struct
         check_invariants t' ;
         t'
 
-    let delete t x = t (* TODO *)
+    (* Deletion will require to be able to decrease the depth (in black nodes) of a subtree
+     * (to compensate for the removal of a black node on the other subtree).
+     * Returns both the new tree and a bool indicating if the global depth has decreased.
+     * Note: we follow the footsteps of J.C. Filliatre implementation as given in his
+     * rbset.ml, v1.12 *)
+    let decrease_depth_l = function
+        (* Easiest way to decrease depth on left: if the root of left subtree is
+         * black then recolor it to red (and rebalance *)
+        | T (c, T (B, l', x', r'), x, r) ->
+            balance_l (B, T (R, l', x', r'), x, r), c = B
+        (* Otherwise, if we have a red at left (and then a black at root and
+         * other blacks at left and right children of the red node) then rotate the
+         * tree so that this red node became the new root and the previous black root
+         * its new right child *)
+        | T (_b, T (R, l', x', T (_b', l'', x'', r'')), x, r) ->
+            (* Notice here that since the depth at left is 1 + the one a right, then
+             * the height of l', l'', r'' and r are the same. *)
+             T (B, l', x', balance_l (B, T (R, l'', x'', r''), x, r)), false
+        | _ -> failwith "Invalid tree for decrease_depth_l"
+
+    let decrease_depth_r = function
+        | T (c, l, x, T (B, l', x', r')) ->
+            balance_r (B, l, x, T (R, l', x', r')), c = B
+        | T (_b, l, x, T (R, T (_b', l'', x'', r''), x', r')) ->
+            T (B, balance_r (B, l, x, T (R, l'', x'', r'')), x', r'), false
+        | _ -> failwith "Invalid tree for decrease_depth_r"
+
+    (* Then we need a function to extract the minimum (aka leftmost) value out of a tree.
+     * Returns the new tree, the min value and a flag indicating if the depth (again,
+     * of black nodes only) was reduced *)
+    let rec extract_min = function
+        | T (R, E, m, r) -> r, m, false
+        | T (B, E, m, r) ->
+            (match r with
+            | T (R, l, x, r) -> T (B, l, x, r), m, false (* recolor the root as black *)
+            | _              -> r, m, true) (* Note: for some reason JCF does not believe in a black node here :-/ *)
+        (* Apply recursively *)
+        | T (c, l, x, r) ->
+            let t', m, d = extract_min l in
+            let t' = T (c, t', x, r) in
+            if d then
+                let t', d' = decrease_depth_r t' in t', m, d'
+            else
+                t', m, false
+        | _ -> failwith "Invalid tree for extract_min"
+
+    let delete t x =
+        (* returns both t without x and a flag indicating if the depth has decreased *)
+        let rec aux = function
+            | E -> raise Not_found
+            | T (c, l, y, r) ->
+                let cmp = Ord.compare x y in
+                if cmp < 0 then
+                    let l', d = aux l in
+                    let t' = T (c, l', y, r) in
+                    if d then decrease_depth_r t' else t', false
+                else if cmp > 0 then
+                    let r', d = aux r in
+                    let t' = T (c, l, y, r') in
+                    if d then decrease_depth_l t' else t', false
+                else ( (* x = y -> reduce right subtree *)
+                    if r = E then match c, l with
+                        | B, T (R, l, x, r) -> T (B, l, x, r), false
+                        | B, x -> x, true
+                        | R, x -> x, false
+                    else
+                        let r', m, d = extract_min r in
+                        let t' = T (c, l, m, r') in
+                        if d then decrease_depth_l t' else t', false
+                ) in
+        fst (aux t)
+
+    let delete' t x =
+        let t' = delete t x in
+        check_invariants t' ;
+        t'
+
 
     let rec iter f = function
         | E -> ()

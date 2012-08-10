@@ -39,6 +39,14 @@ struct
     let insert a x = merge a (singleton x)
     let min = function E -> raise Empty | T (_, x, _, _) -> x
     let delete_min = function E -> raise Empty | T (_, _, l, r) -> merge l r
+
+    let rec member t x = match t with
+        | E -> false
+        | T (_, y, l, r) ->
+            let cmp = Ord.compare x y in
+            if cmp = 0 then true else
+            if cmp < 0 then member l x else
+            member r x
 end
 
 module Weight_leftist_heap (Ord : ORDERED) :
