@@ -122,7 +122,12 @@ sig
     val is_empty   : 'a t -> bool
     val length     : 'a t -> int
     val bind       : 'a t -> key -> 'a -> 'a t
-    val lookup     : 'a t -> key -> 'a (* raises Not_found if key is unbound *)
+    (** [bind m k x] returns the same map as [m] but with a new binding of [k] to [x].
+        Previous binding of [k] in [m] is lost. *)
+    val unbind_exn : 'a t -> key -> 'a t
+    (** raises [Not_found] if key is unbound. *)
+    val unbind     : 'a t -> key -> 'a t
+    val lookup     : 'a t -> key -> 'a (* raises [Not_found] if key is unbound *)
     val iter       : 'a t -> (key -> 'a -> unit) -> unit
     val fold_left  : ('b -> key -> 'a -> 'b) -> 'b -> 'a t -> 'b
     (** [fold_left f v m] will return [f (... (f (f (f v k1 x1) k2 x2) k3 x3) ...) kmax xmax], ie. it will call f for all values
@@ -130,11 +135,24 @@ sig
     val fold_right : (key -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
     (** [fold_right f m v] will proceed in descending order *)
     val update     : 'a t -> key -> ('a -> 'a) -> 'a t
-    (** [update m k f] returns a map which value x for k is replaced with [f x]. *)
+    (** [update m k f] returns a map which value x for k is replaced with [f x]
+        (or same map if k is unbound) *)
+    val update_exn : 'a t -> key -> ('a -> 'a) -> 'a t
+    (** same as [update], but raise [Not_found] if key is unbound. *)
     val update_with_default
                    : 'a -> 'a t -> key -> ('a -> 'a) -> 'a t
-    (** [update_default m k d f] is the same as [update m k f] if [k] is bound in [m], but a new mapping from [k] to [dflt] is added
+    (** [update_with_default d m k f] is the same as [update m k f] if [k] is bound in [m], but a new mapping from [k] to [dflt] is added
         is k is unbound. *)
+    val update_with_default_delayed
+                   : (unit -> 'a) -> 'a t -> key -> ('a -> 'a) -> 'a t
+    (** [update_with_default_delayed d m k f] is the same as [update_with_default d m k f] but d is now a function returning the default value.
+        Useful if this default value is expensive to compute. *)
+    val map        : (key -> 'a -> 'b) -> 'a t -> 'b t
+    (** [map f m] returns a map with same keys than [m] but values transformed through [f]. *)
+    val filter     : (key -> 'a -> bool) -> 'a t -> 'a t
+    (** [filter f m] returns the same map as [m] but with all keys dissatisfying [f] removed. *)
+    val filter_map : (key -> 'a -> 'b option) -> 'a t -> 'b t
+    (** action of filter and map combined. *)
 end
 
 module type HEAP =
