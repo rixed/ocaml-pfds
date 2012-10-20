@@ -86,7 +86,7 @@ sig
     type t
     type e
     val merge : t -> t -> t
-    val filter : t -> (e -> bool) -> t
+    val filter : (e -> bool) -> t -> t
 end
 
 module type SET_BASE =
