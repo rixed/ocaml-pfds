@@ -14,7 +14,7 @@ sig
     val iteri      : (int -> e -> unit) -> t -> unit
     val fold_left  : ('a -> e -> 'a) -> 'a -> t -> 'a
     val fold_right : (e -> 'a -> 'a) -> t -> 'a -> 'a   (* FIXME: must iterate from right to left! *)
-    val find_first : (e -> bool) -> t -> e (* may raise Not_found *)
+    val find_first : (e -> bool) -> t -> e (* may raise [Not_found] *)
     val exists     : (e -> bool) -> t -> bool
 
     (* Converters *)
@@ -39,7 +39,7 @@ sig
     val mapi       : (int -> 'a -> 'b) -> 'a t -> 'b t
     val fold_left  : ('b -> 'a -> 'b) -> 'b -> 'a t -> 'b
     val fold_right : ('a -> 'b -> 'b) -> 'a t -> 'b -> 'b
-    val find_first : ('a -> bool) -> 'a t -> 'a (* may raise Not_found *)
+    val find_first : ('a -> bool) -> 'a t -> 'a (* may raise [Not_found] *)
     val exists     : ('a -> bool) -> 'a t -> bool
 
     (* Converter to various sources *)
@@ -96,7 +96,7 @@ sig
     val insert : t -> e -> t
     val member : t -> e -> bool
     val delete : t -> e -> t
-    (** [delete t x] deletes one value that compare equal with x from t, or raise Not_found *)
+    (** [delete t x] deletes one value that compare equal with x from t, or raise [Not_found] *)
 end
 
 module type SET =
