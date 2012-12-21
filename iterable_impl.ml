@@ -1,4 +1,4 @@
-open Bricabrac
+open Batteries
 
 module type ITER =
 sig
@@ -95,9 +95,9 @@ struct
         str
 
     let to_file fname t =
-        let ochn = open_out fname in
-        try_finalize
-            (iter (output_char ochn)) t
-            close_out ochn
+        let ochn = Legacy.open_out fname in
+        with_dispose ~dispose:Legacy.close_out
+            (fun ochn -> (iter (Legacy.output_char ochn)) t)
+            ochn
 end
 

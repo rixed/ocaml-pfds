@@ -10,7 +10,7 @@ SOURCES  = \
 	ring_impl.ml rope_impl.ml sortlist_impl.ml \
 	iterable_test.ml
 
-REQUIRES = bricabrac
+REQUIRES = batteries
 
 .PHONY: all
 all: byte opt

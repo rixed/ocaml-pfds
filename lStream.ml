@@ -1,5 +1,5 @@
 open Pfds_intf  (* for exceptions *)
-open Bricabrac
+open Batteries
 
 type 'a t = 'a cell Lazy.t
 and 'a cell = Nil | Cons of 'a * 'a t
@@ -59,7 +59,7 @@ let of_array arr =
 
 (* warning: this won't work most of the time since the entries are consumed *)
 let rec of_file ic =
-    lazy (try Cons (input_line ic, of_file ic) with End_of_file -> Nil)
+    lazy (try Cons (Legacy.input_line ic, of_file ic) with End_of_file -> Nil)
 
 let rec of_directory d =
     of_array (Sys.readdir d)
@@ -151,7 +151,7 @@ let (//) = filter
 
 let map_opt t f =
     let t = map t f in
-    map (t // ((<>) None)) unopt
+    map (t // ((<>) None)) Option.get
 
 let (//@) = map_opt
 
