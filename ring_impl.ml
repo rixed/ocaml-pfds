@@ -44,7 +44,7 @@ struct
         let rec aux l s =
             if s > 0 then (f l ; aux (next l) (s-1)) in
         aux t (length t)
-    let iter f t = iterr (f -| get) t
+    let iter f t = iterr (f % get) t
     let iterir f t =
         let rec aux l s i =
             if s > 0 then (f i l ; aux (next l) (s-1) (i+1)) in
