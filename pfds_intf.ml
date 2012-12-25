@@ -223,6 +223,7 @@ sig
     (* Same as iter, fold_left, etc, but call function with whole ring instead of the single element *)
     val iterr         : ('a t -> unit) -> 'a t -> unit
     val iterir        : (int -> 'a t -> unit) -> 'a t -> unit
+    val iteri         : (int -> 'a -> unit) -> 'a t -> unit
     val fold_leftr    : ('b -> 'a t -> 'b) -> 'b -> 'a t -> 'b
     val fold_rightr   : ('a t -> 'b -> 'b) -> 'a t -> 'b -> 'b
 end

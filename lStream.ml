@@ -61,7 +61,7 @@ let of_array arr =
 let rec of_file ic =
     lazy (try Cons (Legacy.input_line ic, of_file ic) with End_of_file -> Nil)
 
-let rec of_directory d =
+let of_directory d =
     of_array (Sys.readdir d)
 
 (* again, beware that the entries are consumed! *)
@@ -163,7 +163,7 @@ let rec exists t f = match t with
     | lazy Nil -> false
     | lazy (Cons (x, t')) -> f x || exists t' f
 
-let rec mem t x = exists t ((=) x)
+let mem t x = exists t ((=) x)
 
 let to_string t =
     let str = String.create (length t) in
@@ -207,7 +207,7 @@ let rec takewhile f = function
 
 let rec skip n t = if n = 0 then t else skip (n-1) (tail t)
 
-let rec one_every n t =
+let one_every n t =
     let rec skip' n t =
         if n = 0 then take_one t else match t with
         | Nil -> Nil
@@ -342,7 +342,7 @@ let prepend_all x tt =
     if is_empty tt then singleton (singleton x) else
     map tt (fun t -> cat (singleton x) t)
 
-let rec permutations ?len t =
+let permutations ?len t =
     if is_empty t then empty else
     let li = length t in
     let lo = match len with

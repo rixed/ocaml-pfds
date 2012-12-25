@@ -49,12 +49,13 @@ struct
         let rec aux l s i =
             if s > 0 then (f i l ; aux (next l) (s-1) (i+1)) in
         aux t (length t) 0
-    let iteri f t = iterir (fun i l -> f i (get l)) t
 
     include Iterable_impl.Of_gen (struct
         type 'a t' = 'a t
         let iter = iter
     end)
+
+    let iteri f t = iterir (fun i l -> f i (get l)) t (* better iteri than the above *)
 
     let map f (l1, l2, s) =
         let l2' = List.map f l2 in  (* we want to map l2 first *)

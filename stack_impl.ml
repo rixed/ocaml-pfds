@@ -51,7 +51,7 @@ struct
         | Nil -> b
         | Cons (x, t') -> fold_left f (f b x) t'
 
-    let rec fold_right f t b = fold_left (fun x b -> f b x) b t
+    let fold_right f t b = fold_left (fun x b -> f b x) b t
 
     let cons x t = Cons (x, t)
 
