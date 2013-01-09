@@ -141,7 +141,7 @@ sig
     (** same as [update], but raise [Not_found] if key is unbound. *)
     val update_with_default
                    : 'a -> 'a t -> key -> ('a -> 'a) -> 'a t
-    (** [update_with_default d m k f] is the same as [update m k f] if [k] is bound in [m], but a new mapping from [k] to [dflt] is added
+    (** [update_with_default d m k f] is the same as [update m k f] if [k] is bound in [m], but a new mapping from [k] to [d] is added
         is k is unbound. *)
     val update_with_default_delayed
                    : (unit -> 'a) -> 'a t -> key -> ('a -> 'a) -> 'a t

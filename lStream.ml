@@ -323,7 +323,7 @@ let zip tt =
     if is_empty tt then empty else aux tt
 
 (* product {{1,2,3},{3,4}} = {{1,3},{1,4},{2,3},{2,4},{3,3},..}
- * actually the other way around : {{1,2},{2,3},{3,3},{1,4},...} *)
+ * actually the other way around : {{1,3},{2,3},{3,3},{1,4},...} *)
 let product tt =
     let req_len, stt =
         fold tt (1, empty) (fun t (next_stam, new_tt) ->
