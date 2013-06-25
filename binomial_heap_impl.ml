@@ -7,14 +7,15 @@ struct
 
     module Tree =
     struct
-        type t = e * t list
+        type lst = Empty | Cons of t * lst
+        and t = e * lst
 
-        let singleton x = x, []
+        let singleton x = x, Empty
         let root (x, _) = x
         (* Link two trees of same rank *)
         let link (x1, c1 as t1) (x2, c2 as t2) =
-            if Ord.compare x1 x2 <= 0 then x1, t2 :: c1
-            else x2, t1 :: c2
+            if Ord.compare x1 x2 <= 0 then x1, Cons (t2, c1)
+            else x2, Cons (t1, c2)
     end
 
     type t = (int * Tree.t) list
@@ -56,8 +57,8 @@ struct
     let delete_min ts =
         let (r, (_, ts1)), ts2 = remove_min_tree ts in
         let rec makeH prev = function
-            | [] -> prev
-            | t :: ts -> makeH ((r-1, t) :: prev) ts in
+            | Tree.Empty -> prev
+            | Tree.Cons (t, ts) -> makeH ((r-1, t) :: prev) ts in
         merge (makeH [] ts1) ts2
 
 end
