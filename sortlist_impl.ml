@@ -1,5 +1,4 @@
 open Pfds_intf
-open Batteries
 
 module Raw =
 struct

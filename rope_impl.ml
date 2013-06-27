@@ -1,4 +1,3 @@
-open Batteries
 open Pfds_intf
 
 module Make_raw =
@@ -170,18 +169,18 @@ struct
     let of_func n f = Leaf (n, 0, f)
 
     let to_file fname t =
-        let ochn = Legacy.open_out fname in
-        with_dispose ~dispose:Legacy.close_out
-            (fun ochn -> (iter (Legacy.output_char ochn)) t)
+        let ochn = open_out fname in
+        Batteries.with_dispose ~dispose:close_out
+            (fun ochn -> (iter (output_char ochn)) t)
             ochn
 
     let of_file fname =
-        let ichn = Legacy.open_in fname in
-        let n = Legacy.in_channel_length ichn in
+        let ichn = open_in fname in
+        let n = in_channel_length ichn in
         let read_byte i =
-            Legacy.seek_in ichn i ;
-            Legacy.input_char ichn in
-        Gc.finalise Legacy.close_in ichn ;
+            seek_in ichn i ;
+            input_char ichn in
+        Gc.finalise close_in ichn ;
         of_func n read_byte
 end
 

@@ -1,4 +1,3 @@
-open Batteries
 open Pfds_intf
 open LStream
 
@@ -100,7 +99,7 @@ let map_check () =
     let none_even n = if n land 1 = 1 then Some n else None in
     let odds = map_opt nat none_even in
     assert (to_list (firsts 4 odds) = [ 1 ; 3 ; 5 ; 7 ]) ;
-    let odds'= nat /@ none_even // ((<>) None) /@ Option.get in
+    let odds'= nat /@ none_even // ((<>) None) /@ BatOption.get in
     assert (to_list (firsts 4 odds') = [ 1 ; 3 ; 5 ; 7 ])
 
 let cat_check () =

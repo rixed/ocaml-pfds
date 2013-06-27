@@ -1,5 +1,6 @@
 open Pfds_intf
-open Batteries
+
+let (%) f g x = f (g x)
 
 module Ring_raw =
 struct

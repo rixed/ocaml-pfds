@@ -1,5 +1,4 @@
 open Pfds_intf  (* for exceptions *)
-open Batteries
 
 type 'a t = 'a cell Lazy.t
 and 'a cell = Nil | Cons of 'a * 'a t
@@ -59,7 +58,7 @@ let of_array arr =
 
 (* warning: this won't work most of the time since the entries are consumed *)
 let rec of_file ic =
-    lazy (try Cons (Legacy.input_line ic, of_file ic) with End_of_file -> Nil)
+    lazy (try Cons (input_line ic, of_file ic) with End_of_file -> Nil)
 
 let of_directory d =
     of_array (Sys.readdir d)
@@ -151,7 +150,7 @@ let (//) = filter
 
 let map_opt t f =
     let t = map t f in
-    map (t // ((<>) None)) Option.get
+    map (t // ((<>) None)) BatOption.get
 
 let (//@) = map_opt
 
@@ -367,7 +366,7 @@ let combinations len t =
         else if ll = 0 then empty
         else cat (prepend_all (head t) (combs (tail t) (len-1) ll))
                  (combs (tail t) len (ll-1)) in
-    if is_empty t or len = 0 then empty
+    if is_empty t || len = 0 then empty
     else combs t len (li - len + 1)
 
 (* {{1,2,3},{4,5},...} -> {1,2,3,4,5,...} *)

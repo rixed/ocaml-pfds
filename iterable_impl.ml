@@ -1,5 +1,3 @@
-open Batteries
-
 module type ITER =
 sig
     type t'
@@ -95,9 +93,9 @@ struct
         str
 
     let to_file fname t =
-        let ochn = Legacy.open_out fname in
-        with_dispose ~dispose:Legacy.close_out
-            (fun ochn -> (iter (Legacy.output_char ochn)) t)
+        let ochn = open_out fname in
+        Batteries.with_dispose ~dispose:close_out
+            (fun ochn -> (iter (output_char ochn)) t)
             ochn
 end
 
