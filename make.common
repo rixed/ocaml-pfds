@@ -1,8 +1,8 @@
 # vim:syntax=make
-OCAMLC   = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlc
-OCAMLOPT = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamlopt
-OCAMLDEP = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamldep
-OCAMLDOC = OCAMLPATH=$(top_srcdir)/.. ocamlfind ocamldoc -keep-code -html -all-params -colorize-code
+OCAMLC   = ocamlfind ocamlc
+OCAMLOPT = ocamlfind ocamlopt
+OCAMLDEP = ocamlfind ocamldep
+OCAMLDOC = ocamlfind ocamldoc -keep-code -html -all-params -colorize-code
 override OCAMLOPTFLAGS += $(INCS) -w Ael -g -annot
 override OCAMLFLAGS    += $(INCS) -w Ael -g -annot
 
