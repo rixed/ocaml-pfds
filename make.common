@@ -20,7 +20,7 @@ $(ARCHIVE): $(OBJECTS) $(CLIB)
 	$(OCAMLC)   -a -o $@ -package "$(REQUIRES)" -linkpkg $(OCAMLFLAGS) $(OBJECTS)
 $(XARCHIVE): $(XOBJECTS) $(CLIB)
 	$(OCAMLOPT) -a -o $@ -package "$(REQUIRES)" $(OCAMLOPTFLAGS) $(XOBJECTS)
-install: $(ARCHIVE)
+install: $(ARCHIVE) $(XARCHIVE)
 	if test -f "$(XARCHIVE)" ; then extra="$(XARCHIVE) "`basename "$(XARCHIVE)" .cmxa`.a ; fi ; \
 	ocamlfind install "$(PKG_NAME)" *.cmi "$(ARCHIVE)" META $$extra
 uninstall:
