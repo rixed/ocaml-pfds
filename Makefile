@@ -1,6 +1,7 @@
 top_srcdir = .
 PKG_NAME = pfds
 SOURCES  = \
+	misc.ml \
 	pfds_intf.ml iterable_impl.ml stack_ops_impl.ml stack_impl.ml \
 	set_ops_impl.ml btree_impl.ml finite_map_impl.ml leftist_heap_impl.ml \
 	weight_leftist_heap_impl.ml heap_ops_impl.ml \
@@ -10,7 +11,7 @@ SOURCES  = \
 	ring_impl.ml rope_impl.ml sortlist_impl.ml \
 	iterable_test.ml
 
-REQUIRES = batteries
+REQUIRES =
 
 .PHONY: all
 all: byte opt

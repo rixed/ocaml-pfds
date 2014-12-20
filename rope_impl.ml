@@ -170,7 +170,7 @@ struct
 
     let to_file fname t =
         let ochn = open_out fname in
-        Batteries.with_dispose ~dispose:close_out
+        Misc.with_dispose close_out
             (fun ochn -> (iter (output_char ochn)) t)
             ochn
 

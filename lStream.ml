@@ -148,9 +148,12 @@ let rec filter t f = match t with
 
 let (//) = filter
 
-let map_opt t f =
-    let t = map t f in
-    map (t // ((<>) None)) BatOption.get
+let rec map_opt t f = match t with
+    | lazy Nil -> empty
+    | lazy (Cons (x, t')) ->
+        (match f x with
+        | None -> map_opt t' f
+        | Some x' -> lazy (Cons (x', map_opt t' f)))
 
 let (//@) = map_opt
 

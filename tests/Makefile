@@ -1,4 +1,3 @@
-top_srcdir = ..
 REQUIRES = pfds benchmark
 PROGRAMS = \
 	stack_test.byte \
@@ -11,7 +10,8 @@ PROGRAMS = \
 	rope_test.byte \
 	insertion_bench.byte \
 	sortlist_test.byte \
-	finite_map_test.byte
+	finite_map_test.byte \
+	inserts.byte
 
 include ../make.common
 
