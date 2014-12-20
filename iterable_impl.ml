@@ -94,7 +94,7 @@ struct
 
     let to_file fname t =
         let ochn = open_out fname in
-        Misc.with_dispose close_out
+        Pfds_misc.with_dispose close_out
             (fun ochn -> (iter (output_char ochn)) t)
             ochn
 end
