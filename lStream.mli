@@ -5,7 +5,7 @@ val empty        : 'a t
 val is_empty     : 'a t -> bool
 val is_singleton : 'a t -> bool
 
-(* Convertion / Creation *)
+(* Conversion / Creation *)
 val singleton    : 'a -> 'a t
 val to_list_rev  : 'a t -> 'a list
 val to_list      : 'a t -> 'a list
@@ -51,7 +51,7 @@ val cmp_shortest : ('a -> 'a -> int) -> 'a t -> 'a t -> int
 (* same as above but stop comparing elements as soon as one of the stream is empty *)
 val merge        : ('a -> 'a -> int) -> 'a t -> 'a t -> 'a t
 (* [merge cmp a b] returns the stream composed of elements of a and b interleaved such that
- * the cmp fonction yield >= 0 for any two successive elements of the result stream *)
+ * the cmp function yield >= 0 for any two successive elements of the result stream *)
 
 (* Generators *)
 val cycle        : 'a t -> 'a t
