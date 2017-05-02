@@ -29,4 +29,4 @@ check: $(ARCHIVE) $(XARCHIVE)
 	echo "OK"
 
 clean-spec:
-
+	$(MAKE) -C tests clean

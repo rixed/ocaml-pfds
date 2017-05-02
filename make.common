@@ -48,7 +48,7 @@ endif
 
 # Clean up
 clean: clean-spec
-	rm -f *.cm[ioxa] *.cmxa *.a *.s *.o *.byte *.opt .depend
+	rm -f *.cm[ioxa] *.cmxa *.a *.s *.o *.byte *.opt .depend *.annot
 
 # Dependencies
 .depend: *.ml
