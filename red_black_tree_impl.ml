@@ -10,13 +10,44 @@ struct
     let is_empty = function E -> true | _ -> false
     let singleton x = T (B, E, x, E)
 
-    let rec member t x = match t with
-        | E -> false
+    (* Returns the element that compares equal to the one given *)
+    let rec find t x = match t with
+        | E -> raise Not_found
         | T (_, l, y, r) ->
             let cmp = Ord.compare x y in
-            if cmp < 0 then member l x
-            else if cmp > 0 then member r x
-            else true
+            if cmp < 0 then find l x
+            else if cmp > 0 then find r x
+            else y
+
+    let member t x = match find t x with
+      | exception Not_found -> false
+      | _ -> true
+
+    let find_best t x =
+        let rec loop best_l best_r = function
+            | E -> best_l, best_r
+            | T (_, l, y, r) ->
+                let cmp = Ord.compare x y in
+                if cmp < 0 then loop best_l (Some y) l
+                else if cmp > 0 then loop (Some y) best_r r
+                else let sy = Some y in sy, sy
+        in loop None None t
+
+    let get_min t =
+        let rec loop min = function
+            | E ->
+                (match min with None -> raise Not_found
+                              | Some m -> m)
+            | T (_, l, x, _) -> loop (Some x) l
+        in loop None t
+
+    let get_max t =
+        let rec loop max = function
+            | E ->
+                (match max with None -> raise Not_found
+                              | Some m -> m)
+            | T (_, _, x, r) -> loop (Some x) r
+        in loop None t
 
     let check_invariants t =
         let rec chk prec_col tot_B = function

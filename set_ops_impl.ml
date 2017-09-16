@@ -1,6 +1,7 @@
 open Pfds_intf
 
-module Make (Set : SET_BASE) =
+module Make (Set : SET_BASE) :
+    SET with type t = Set.t and type e = Set.e =
 struct
     include Set
     let merge a b = fold_left insert a b

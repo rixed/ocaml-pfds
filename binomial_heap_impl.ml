@@ -7,10 +7,10 @@ struct
 
     module Tree =
     struct
-        type lst = Empty | Cons of t * lst
+        type lst = Nul | Cons of t * lst
         and t = e * lst
 
-        let singleton x = x, Empty
+        let singleton x = x, Nul
         let root (x, _) = x
         (* Link two trees of same rank *)
         let link (x1, c1 as t1) (x2, c2 as t2) =
@@ -57,7 +57,7 @@ struct
     let delete_min ts =
         let (r, (_, ts1)), ts2 = remove_min_tree ts in
         let rec makeH prev = function
-            | Tree.Empty -> prev
+            | Tree.Nul -> prev
             | Tree.Cons (t, ts) -> makeH ((r-1, t) :: prev) ts in
         merge (makeH [] ts1) ts2
 

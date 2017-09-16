@@ -95,6 +95,7 @@ sig
 
     val insert : t -> e -> t
     val member : t -> e -> bool
+    (* find_best as in red_black_tree? *)
     val delete : t -> e -> t
     (** [delete t x] deletes one value that compare equal with x from t, or raise [Not_found] *)
 end
