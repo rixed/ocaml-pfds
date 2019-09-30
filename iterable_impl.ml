@@ -88,9 +88,9 @@ struct
         Array.of_list (to_list t)
 
     let to_string t =
-        let str = String.create (length t) in
-        iteri (String.set str) t ;
-        str
+        let str = Bytes.create (length t) in
+        iteri (Bytes.set str) t ;
+        Bytes.to_string str
 
     let to_file fname t =
         let ochn = open_out fname in

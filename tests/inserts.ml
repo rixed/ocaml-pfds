@@ -1,5 +1,3 @@
-open Pfds_intf
-
 module Int = struct
     type t = int
     let compare = compare

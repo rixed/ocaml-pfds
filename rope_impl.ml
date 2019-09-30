@@ -144,9 +144,9 @@ struct
             !idx
 
     let to_string t =
-        let str = String.create (length t) in
-        iteri (String.set str) t ;
-        str
+        let str = Bytes.create (length t) in
+        iteri (Bytes.set str) t ;
+        Bytes.to_string str
 
     let of_string str =
         let n = String.length str in

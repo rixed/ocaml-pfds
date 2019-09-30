@@ -29,7 +29,7 @@ struct
         assert (to_string (sub complex 7 21) = "ck brown fox j") ;
 
         (* iterators *)
-        let complex_up = map Char.uppercase complex in
+        let complex_up = map Char.uppercase_ascii complex in
         assert (to_string complex_up = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG") ;
         assert (fold_left  (fun n _ -> n+1) 0 complex_up = length complex_up) ;
         assert (fold_right (fun _ n -> n+1) complex_up 0 = length complex_up) ;

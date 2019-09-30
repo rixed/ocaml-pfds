@@ -2,7 +2,7 @@ open Pfds_intf
 
 module Heap_test (Heap : HEAP with type e = String.t) =
 struct
-    open Heap
+    open Heap [@@ocaml.warning "-44"]
 
     let s = singleton "one"
     let s' = insert s "two"

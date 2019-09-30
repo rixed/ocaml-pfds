@@ -1,5 +1,3 @@
-open Pfds_intf
-
 module type INSERABLE =
 sig
     type t
@@ -18,14 +16,15 @@ module Ins5 : INSERABLE = Red_black_tree_impl.Red_black_tree_raw (String)
 module Inserable_bench (Ins : INSERABLE) =
 struct
     open Ins
-    let rec string_rev s =
+    let string_rev s =
         let n = String.length s in
+        let b = Bytes.of_string s in
         for i = 0 to (n - 1) / 2 do
             let c = s.[i] in
-            s.[i] <- s.[n-i-1] ;
-            s.[n-i-1] <- c ;
+            Bytes.set b i s.[n-i-1] ;
+            Bytes.set b (n-i-1) c ;
         done ;
-        s
+        Bytes.to_string b
 
     let insert_file fname =
         let cin = open_in fname in

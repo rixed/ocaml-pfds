@@ -168,9 +168,9 @@ let rec exists t f = match t with
 let mem t x = exists t ((=) x)
 
 let to_string t =
-    let str = String.create (length t) in
-    iteri t (String.set str) ;
-    str
+    let str = Bytes.create (length t) in
+    iteri t (Bytes.set str) ;
+    Bytes.to_string str
 
 let to_array t =
     let t' = ref t in

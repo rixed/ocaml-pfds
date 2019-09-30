@@ -1,4 +1,3 @@
-open Pfds_intf
 open LStream
 
 (* We want to check how many values are forced *)
@@ -238,7 +237,7 @@ let choose_check () =
         let sigma_theory = (float_of_int (t_len-1))/.sqrt (12.) in
         Printf.printf "Average number (from 0 to %d): %f (sigma=%f instead of %f)\n" (t_len-1) avg sigma sigma_theory in
     (* ask fo 1, then 2, then etc up to 10 items, and count how many times each number is chosen *)
-    for run = 0 to 1000 do
+    for _ = 0 to 1000 do
         for size = 0 to t_len do
             let t' = choose size t in
             iter t' incr_hit
@@ -249,7 +248,7 @@ let choose_check () =
     (* compare with bare random *)
     Array.iteri (fun i _ -> nb_hit.(i) <- 0) nb_hit ;
     nb_choice := 0 ;
-    for run = 0 to 1000 do incr_hit (Random.int t_len) done ;
+    for _ = 0 to 1000 do incr_hit (Random.int t_len) done ;
     Printf.printf "Compare with mere random:\n" ;
     report_stats ()
 
