@@ -228,8 +228,12 @@ sig
     val get           : 'a t -> 'a
     val next          : 'a t -> 'a t
     val prev          : 'a t -> 'a t
+    (* FIXME: make these (and possibly others) 'a -> 'a t -> 'a t so that it's easier to queue operations *)
+    (* Insert the element before the current one, and focus it *)
     val insert_before : 'a t -> 'a -> 'a t
+    (* Insert the element after the current one, and focus it *)
     val insert_after  : 'a t -> 'a -> 'a t
+    (* Remove the focused element, and focus on the one after it *)
     val remove        : 'a t -> 'a t
     (* Same as iter, fold_left, etc, but call function with whole ring instead of the single element *)
     val iterr         : ('a t -> unit) -> 'a t -> unit

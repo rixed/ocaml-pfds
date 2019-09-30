@@ -36,7 +36,7 @@ struct
         | curr :: prevs, nexts, size -> e :: curr :: prevs, nexts, size+1
         | _ -> [e], [], 1
 
-    let remove lst = match lst with
+    let remove = function
         | _ :: prevs, n :: nexts, size -> n :: prevs, nexts, size-1
         | _ :: prevs, [], size -> rewind (prevs, [], size-1)
         | _ -> raise Not_found
