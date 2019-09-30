@@ -20,7 +20,7 @@ PFDS_SOURCES = \
 	lStream.mli lStream.ml \
 	batched_queue_impl.ml dequeue_impl.ml \
 	ring_impl.ml rope_impl.ml sortlist_impl.ml \
-	iterable_test.ml
+	iterable_test.ml prefix_tree.ml
 
 INSTALLED = \
 	pfds.cmxa \
@@ -106,7 +106,8 @@ TEST_PROGRAMS = \
 	tests/insertion_bench.byte \
 	tests/sortlist_test.byte \
 	tests/finite_map_test.byte \
-	tests/inserts.byte
+	tests/inserts.byte \
+	tests/prefix_tree_test.byte
 
 check: $(TEST_PROGRAMS) $(TEST_PROGRAMS:.byte=.opt)
 	@for t in $^ ; do \
