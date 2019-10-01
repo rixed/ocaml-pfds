@@ -264,4 +264,9 @@ struct
         loop_children t.children
     in
     lookup_prefix t (subkey_of_key key)
+
+  let rec length t =
+    List.fold_left (fun l child ->
+      length child + l
+    ) (if t.value = None then 0 else 1) t.children
 end

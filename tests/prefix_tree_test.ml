@@ -25,14 +25,17 @@ let () =
   (* Test empty tree: *)
   assert (is_empty empty) ;
   assert (not_found empty "bar") ;
+  assert (length empty = 0) ;
   (* Test with the empty key: *)
   let t = add "" 42 empty in
+  assert (length t = 1) ;
   assert (not (is_empty t)) ;
   assert (lookup t "" = 42) ;
   assert (not_found t "f") ;
   assert (not_found t "foobar") ;
   (* Tree with a non trivial key: *)
   let t = add "foobar" 17 t in
+  assert (length t = 2) ;
   assert (lookup t "" = 42) ;
   assert (lookup t "foobar" = 17) ;
   assert (not_found t "barbaz") ;
@@ -40,6 +43,8 @@ let () =
   assert (not_found t "foobarz") ;
   (* Test splitting a prefix: *)
   let t = add "foo" 51 t in
+  assert (length t = 3) ;
+  assert (lookup t "" = 42) ;
   assert (lookup t "" = 42) ;
   assert (lookup t "foo" = 51) ;
   assert (not_found t "fo") ;
@@ -51,29 +56,39 @@ let () =
   assert (not_found t "bar") ;
   (* Test replacing values: *)
   let t = add "foo" 52 t in
+  assert (length t = 3) ;
+  assert (lookup t "" = 42) ;
+  assert (lookup t "" = 42) ;
   let t = add "" 43 t in
+  assert (length t = 3) ;
   assert (lookup t "" = 43) ;
   assert (lookup t "foo" = 52) ;
   (* Test removing values: *)
   let t' = remove "" t in
+  assert (length t' = 2) ;
   assert (not_found t' "") ;
   assert (lookup t' "foo" = 52) ;
   assert (lookup t' "foobar" = 17) ;
   let t' = remove "foo" t' in
+  assert (length t' = 1) ;
   assert (not_found t' "foo") ;
   assert (lookup t' "foobar" = 17) ;
   let t' = remove "foobar" t' in
+  assert (length t' = 0) ;
   assert (not_found t' "foobar") ;
   assert (is_empty t') ;
   (* Test removing in a different order: *)
   let t' = remove "foobar" t in
+  assert (length t' = 2) ;
   assert (not_found t' "foobar") ;
   assert (lookup t' "foo" = 52) ;
   assert (lookup t' "" = 43) ;
   let t' = remove "foo" t' in
+  assert (length t' = 1) ;
   assert (not_found t' "foo") ;
   assert (lookup t' "" = 43) ;
   let t' = remove "" t' in
+  assert (length t' = 0) ;
   assert (not_found t' "") ;
   assert (is_empty t') ;
   (* Test removing an unbound key raises Not_found: *)
@@ -86,4 +101,6 @@ let () =
     insert_loop val_of_idx (i+1) (add k v t) in
   let t1 = insert_loop (fun i -> i) 0 empty
   and t2 = insert_loop ((-) 999) 0 empty in
+  assert (length t1 = 1000) ;
+  assert (length t2 = 1000) ;
   assert (compare t1 t2 = 0)
