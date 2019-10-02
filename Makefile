@@ -26,8 +26,8 @@ INSTALLED = \
 	pfds.cmxa \
 	pfds.cma \
 	pfds.a \
-	$(PFDS_SOURCE:.ml=.cmi) \
-	$(PFDS_SOURCE:.ml=.cmx) \
+	$(PFDS_SOURCES:.ml=.cmi) \
+	$(PFDS_SOURCES:.ml=.cmx) \
 	META
 
 all: $(INSTALLED)

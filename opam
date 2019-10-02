@@ -10,10 +10,8 @@ homepage: "https://github.com/rixed/ocaml-pfds"
 bug-reports: "https://github.com/rixed/ocaml-pfds/issues"
 dev-repo: "git+https://github.com/rixed/ocaml-pfds.git"
 flags: light-uninstall
-build: [
-  [make]
-  [make "check"] {with-test}
-]
+build: [make]
+build-test: [make "check"]
 install: [make "install"]
 remove: [make "uninstall"]
 depends: [
