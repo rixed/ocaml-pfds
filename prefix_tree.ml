@@ -11,6 +11,9 @@ let slice_consume slice l =
   { slice with offset = slice.offset + l ;
                length = slice.length - l }
 
+let make_empty_slice data =
+  { data ; offset = 0 ; length = 0 }
+
 module type KEY =
 sig
   type t
@@ -30,8 +33,11 @@ sig
    * common prefix of [s1] and [s2]. *)
 
   val cat_slices : t slice -> t slice -> t slice
-  (* [cat_slices s1 s2] returns a slice representing the concatenation of
+  (** [cat_slices s1 s2] returns a slice representing the concatenation of
    * [s1] and [s2], trying not to copy data needlessly. *)
+
+  val of_slice : t slice -> t
+  (** [of_slice s] extract the slice from the data *)
 end
 
 (* Some possible implementations:
@@ -63,14 +69,19 @@ struct
       else loop (i + 1) in
     loop 0
 
+  let of_slice s =
+    if s.offset = 0 && s.length = String.length s.data then
+      s.data
+    else
+      String.sub s.data s.offset s.length
+
   let cat_slices s1 s2 =
     if s1.data == s2.data &&
        s1.offset + s1.length = s2.offset
     then
       { s1 with length = s1.length + s2.length }
     else
-      let string_of_slice s = String.sub s.data s.offset s.length in
-      let data = string_of_slice s1 ^ string_of_slice s2 in
+      let data = of_slice s1 ^ of_slice s2 in
       { data ; offset = 0 ; length = String.length data }
 end
 
@@ -269,4 +280,58 @@ struct
     List.fold_left (fun l child ->
       length child + l
     ) (if t.value = None then 0 else 1) t.children
+
+  (* Fold over values starting with given prefix in key order: *)
+  let fold t ?(prefix=Key.empty) f u =
+    (* Fold over t and all its children (once the prefix have been reached): *)
+    let rec do_fold k u t =
+      let k = Key.cat_slices k t.subkey in
+      let u =
+        match t.value with
+        | None -> u
+        | Some v ->
+            let s = Key.of_slice k in
+            f s v u in
+      List.fold_left (do_fold k) u t.children
+    in
+    (* Locate the child that continue the subkey, and fold over it.
+     * [k] is the prefix so far, up to the beginning of the children. *)
+    let rec loop_children k subkey = function
+      | [] ->
+          u
+      | child :: children' ->
+          assert (subkey.length > 0) ;
+          assert (child.subkey.length > 0) ;
+          let next_child () =
+            let c = Key.compare_slice subkey child.subkey in
+            if c <= 0 then u
+            else loop_children k subkey children'
+          in
+          let l = Key.common_prefix subkey child.subkey in
+          if l = 0 then next_child () else (* No such key *)
+          if subkey.length > child.subkey.length then
+            (* In that case we must match the prefix in full: *)
+            if l = child.subkey.length then
+              (* Keep looking down the tree: *)
+              let k' = Key.cat_slices k subkey in
+              let subkey' = slice_consume subkey l in
+              loop_children k' subkey' child.children
+            else
+              next_child () (* no need to continue *)
+          else
+            (* This child starts with the prefix: *)
+            do_fold k u child
+    in
+    let subkey = subkey_of_key prefix in
+    let k = make_empty_slice prefix in
+    if subkey.length = 0 then do_fold k u t else
+    let l = Key.common_prefix subkey t.subkey in
+    if l = t.subkey.length then
+      let subkey' = slice_consume subkey l in
+      if subkey'.length = 0 then do_fold k u t else
+      loop_children t.subkey subkey' t.children
+    else
+      if l = 0 then u else
+      do_fold k u t
+
 end

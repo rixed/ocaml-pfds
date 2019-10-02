@@ -17,6 +17,7 @@ let () =
   and p_key oc k =
     Printf.fprintf oc "%S" (String.sub k.data k.offset k.length) in
   let dump = dump p_key p_data in
+  ignore dump ;
   let assert_not_found f =
     try
       f () ;
@@ -103,4 +104,24 @@ let () =
   and t2 = insert_loop ((-) 999) 0 empty in
   assert (length t1 = 1000) ;
   assert (length t2 = 1000) ;
-  assert (compare t1 t2 = 0)
+  assert (compare t1 t2 = 0) ;
+  (* Test fold by prefix: *)
+  let t =
+    empty |>
+    add "foo" 0x1 |>
+    add "bar" 0x2 |>
+    add "baz" 0x4 |>
+    add "foobar" 0x8 |>
+    add "foobaz" 0x10 |>
+    add "glop" 0x20 |>
+    add "glop glop" 0x40 in
+  let merge_keys prefix =
+    fold t ~prefix (fun k v u -> u lor v) 0 in
+  assert (merge_keys "zzz" = 0) ;
+  assert (merge_keys "" = 0x7F) ;
+  assert (merge_keys "foo" = 0x19) ;
+  assert (merge_keys "fo" = 0x19) ;
+  assert (merge_keys "f" = 0x19) ;
+  assert (merge_keys "glop glo" = 0x40) ;
+  assert (merge_keys "glop glop" = 0x40) ;
+  assert (merge_keys "glop glop glop" = 0)
