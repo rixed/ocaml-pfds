@@ -11,7 +11,7 @@ bug-reports: "https://github.com/rixed/ocaml-pfds/issues"
 dev-repo: "git+https://github.com/rixed/ocaml-pfds.git"
 flags: light-uninstall
 build: [make]
-build-test: [make "check"]
+run-test: [make "check"]
 install: [make "install"]
 remove: [make "uninstall"]
 depends: [
