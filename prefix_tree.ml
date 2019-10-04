@@ -14,6 +14,11 @@ let slice_consume slice l =
 let make_empty_slice data =
   { data ; offset = 0 ; length = 0 }
 
+let sub_slice slice o l =
+  assert (o <= slice.length) ;
+  assert (o + l <= slice.length) ;
+  { data = slice.data ; offset = slice.offset + o ; length = l }
+
 module type KEY =
 sig
   type t
@@ -313,7 +318,10 @@ struct
             (* In that case we must match the prefix in full: *)
             if l = child.subkey.length then
               (* Keep looking down the tree: *)
-              let k' = Key.cat_slices k subkey in
+              let k' =
+                (* Append what's been matched: the first l chars: *)
+                let s = sub_slice subkey 0 l in
+                Key.cat_slices k s in
               let subkey' = slice_consume subkey l in
               loop_children k' subkey' child.children
             else
@@ -323,15 +331,15 @@ struct
             do_fold k u child
     in
     let subkey = subkey_of_key prefix in
-    let k = make_empty_slice prefix in
-    if subkey.length = 0 then do_fold k u t else
+    let k_empty = make_empty_slice prefix in
+    if subkey.length = 0 then do_fold k_empty u t else
     let l = Key.common_prefix subkey t.subkey in
     if l = t.subkey.length then
       let subkey' = slice_consume subkey l in
-      if subkey'.length = 0 then do_fold k u t else
+      if subkey'.length = 0 then do_fold k_empty u t else
       loop_children t.subkey subkey' t.children
     else
       if l = 0 then u else
-      do_fold k u t
+      do_fold k_empty u t
 
 end

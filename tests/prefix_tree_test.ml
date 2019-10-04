@@ -124,4 +124,13 @@ let () =
   assert (merge_keys "f" = 0x19) ;
   assert (merge_keys "glop glo" = 0x40) ;
   assert (merge_keys "glop glop" = 0x40) ;
-  assert (merge_keys "glop glop glop" = 0)
+  assert (merge_keys "glop glop glop" = 0) ;
+  (* Non regression test: *)
+  let t =
+    empty |>
+    add "baz" 1 |>
+    add "foobar" 2 |>
+    add "frobar" 3 in
+  fold ~prefix:"foo" t (fun k v ()  ->
+    assert (k = "foobar" && v = 2)
+  ) ()
