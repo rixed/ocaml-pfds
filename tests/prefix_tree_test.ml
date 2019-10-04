@@ -12,12 +12,11 @@ let not_found t k =
 
 let () =
   let open M in
-  let p_data oc d =
+  (*let p_data oc d =
     Printf.fprintf oc "%d" d
   and p_key oc k =
     Printf.fprintf oc "%S" (String.sub k.data k.offset k.length) in
-  let dump = dump p_key p_data in
-  ignore dump ;
+  let dump = dump p_key p_data in*)
   let assert_not_found f =
     try
       f () ;
@@ -104,7 +103,7 @@ let () =
   and t2 = insert_loop ((-) 999) 0 empty in
   assert (length t1 = 1000) ;
   assert (length t2 = 1000) ;
-  assert (compare t1 t2 = 0) ;
+  assert (M.compare t1 t2 = 0) ;
   (* Test fold by prefix: *)
   let t =
     empty |>
@@ -116,7 +115,7 @@ let () =
     add "glop" 0x20 |>
     add "glop glop" 0x40 in
   let merge_keys prefix =
-    fold t ~prefix (fun k v u -> u lor v) 0 in
+    fold t ~prefix (fun _k v u -> u lor v) 0 in
   assert (merge_keys "zzz" = 0) ;
   assert (merge_keys "" = 0x7F) ;
   assert (merge_keys "foo" = 0x19) ;
