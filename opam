@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "pfds"
-version: "0.2"
+version: "0.3"
 synopsis: "Purely Functional Data Structures, mostly from Okasaki"
 description:
   "With the addition of a stream type inspired by itertools, a prefix tree..."
