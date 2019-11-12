@@ -1,4 +1,4 @@
 description = "Purely Functional Data Structures (from Okasaki)"
-version = "0.3"
+version = "0.4"
 archive(byte) = "pfds.cma"
 archive(native) = "pfds.cmxa"
