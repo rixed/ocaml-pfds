@@ -132,4 +132,12 @@ let () =
     add "frobar" 3 in
   fold ~prefix:"foo" t (fun k v ()  ->
     assert (k = "foobar" && v = 2)
-  ) ()
+  ) () ;
+  (* Non regression test: removing middle key deletes the whole tree: *)
+  let t = add "a/1" 1 empty |>
+          add "a/2" 2 |>
+          add "a/3" 3 in
+  let t = remove "a/2" t in
+  assert (lookup t "a/1" = 1) ;
+  assert (lookup t "a/3" = 3) ;
+  assert (not_found t "a/2")

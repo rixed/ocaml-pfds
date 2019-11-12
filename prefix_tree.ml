@@ -238,10 +238,11 @@ struct
                         let subkey = Key.cat_slices sub.subkey singleton.subkey in
                         { singleton with subkey } :: prevs
                     | _ ->
-                        prevs
+                        sub :: prevs
                   else
                     sub :: prevs in
-                  { t with children = List.rev_append prevs children' }
+                let children = List.rev_append prevs children' in
+                { t with children }
               else if l > 0 then
                 raise Not_found
               else
